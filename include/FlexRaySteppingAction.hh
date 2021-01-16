@@ -2,7 +2,7 @@
 /// \brief Definition of the FlexRaySteppingAction class
 
 #ifndef FlexRaySteppingAction_h
-#define FlexRaySteppingAction_h 1
+#define FlexRaySteppingAction_h
 
 #include "G4UserSteppingAction.hh"
 #include "globals.hh"
@@ -15,15 +15,15 @@ class G4LogicalVolume;
 
 class FlexRaySteppingAction : public G4UserSteppingAction
 {
-  public:
-    FlexRaySteppingAction(FlexRayEventAction* eventAction);
-    virtual ~FlexRaySteppingAction();
+public:
+  FlexRaySteppingAction(FlexRayEventAction* eventAction);
+  virtual ~FlexRaySteppingAction();
 
-    // method from the base class
-    virtual void UserSteppingAction(const G4Step*) override;
+  // method from the base class
+  virtual void UserSteppingAction(const G4Step* step) override;
 
-  private:
-    FlexRayEventAction*  fEventAction;
+private:
+  FlexRayEventAction* fEventAction;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

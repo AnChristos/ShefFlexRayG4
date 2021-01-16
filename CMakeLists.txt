@@ -23,7 +23,6 @@ endif()
 include(${Geant4_USE_FILE})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 # NB: headers are included so they will show up in IDEs
@@ -45,7 +44,6 @@ target_link_libraries(ShefFlexRayG4 ${Geant4_LIBRARIES})
 set(SHEFFLEXRAYG4_SCRIPTS
   run.mac
   vis.mac
-  vrml.mac
   gui.mac
   init_vis.mac
   )

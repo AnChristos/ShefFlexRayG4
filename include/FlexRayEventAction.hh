@@ -2,7 +2,7 @@
 /// \brief Definition of the FlexRayEventAction class
 
 #ifndef FlexRayEventAction_h
-#define FlexRayEventAction_h 1
+#define FlexRayEventAction_h 
 
 #include "G4UserEventAction.hh"
 #include "globals.hh"

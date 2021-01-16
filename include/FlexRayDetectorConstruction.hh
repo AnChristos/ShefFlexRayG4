@@ -1,5 +1,5 @@
 #ifndef FlexRayDetectorConstruction_h
-#define FlexRayDetectorConstruction_h 1
+#define FlexRayDetectorConstruction_h 
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"

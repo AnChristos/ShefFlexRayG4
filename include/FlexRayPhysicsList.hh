@@ -1,5 +1,5 @@
 #ifndef FlexRayPhysicsList_h
-#define FlexRayPhysicsList_h 1
+#define FlexRayPhysicsList_h
 
 #include "G4VModularPhysicsList.hh"
 

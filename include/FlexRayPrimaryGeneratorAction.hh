@@ -17,18 +17,18 @@ class FlexRayDetectorConstruction;
 class FlexRayPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
-  FlexRayPrimaryGeneratorAction(FlexRayDetectorConstruction* detCostr);
+  FlexRayPrimaryGeneratorAction(FlexRayDetectorConstruction* detector);
   virtual ~FlexRayPrimaryGeneratorAction();
 
   // method from the base class
-  virtual void GeneratePrimaries(G4Event*) override;
+  virtual void GeneratePrimaries(G4Event* event) override;
 
   // method to access particle gun
-  const G4ParticleGun* GetParticleGun() const { return fParticleGun.get(); }
+  const G4ParticleGun* GetParticleGun() const { return fParticleGun; }
 
 private:
   // owning pointer a to G4 gun class
-  std::unique_ptr<G4ParticleGun> fParticleGun;
+  G4ParticleGun* fParticleGun;
   // pointer to the FlexRayDetector
   FlexRayDetectorConstruction* fFlexRayDetector;
 };
