@@ -67,7 +67,6 @@ BCF10::createMaterials()
   G4Material* PolystereneCore = sNistMan->BuildMaterialWithNewDensity(
     "BCF10_Polysterene", "G4_POLYSTYRENE", 1.05 * g / cm3);
 
-  G4cout << "HERE " << PolystereneCore << G4endl;
   // Set Birk's constant
   PolystereneCore->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
 
