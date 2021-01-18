@@ -19,14 +19,14 @@ FlexRayPrimaryGeneratorAction::FlexRayPrimaryGeneratorAction(
   FlexRayDetectorConstruction* detector)
   : fFlexRayDetector(detector)
 {
-  fParticleGun = new G4ParticleGun;
+  fparticleSource = new G4GeneralParticleSource;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 FlexRayPrimaryGeneratorAction::~FlexRayPrimaryGeneratorAction()
 {
-  delete fParticleGun;
+  delete fparticleSource;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -34,5 +34,5 @@ FlexRayPrimaryGeneratorAction::~FlexRayPrimaryGeneratorAction()
 void
 FlexRayPrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 {
-  fParticleGun->GeneratePrimaryVertex(event);
+  fparticleSource->GeneratePrimaryVertex(event);
 }

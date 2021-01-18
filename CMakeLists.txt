@@ -46,6 +46,7 @@ set(SHEFFLEXRAYG4_SCRIPTS
   vis.mac
   gui.mac
   init_vis.mac
+  gamma.mac
   )
 
 foreach(_script ${SHEFFLEXRAYG4_SCRIPTS})
