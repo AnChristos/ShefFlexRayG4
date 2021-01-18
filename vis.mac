@@ -78,13 +78,4 @@
 #
 /run/initialize
 #
-/gps/particle ion
-/gps/ion 11 22 0 0
-#
-/gps/pos/type Volume
-/gps/pos/shape Cylinder
-/gps/pos/centre 0. 0. -97.5 mm
-/gps/pos/radius 1 mm
-/gps/pos/halfz 0.5 mm
-#
 /run/beamOn 1

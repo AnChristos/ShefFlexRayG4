@@ -1,5 +1,5 @@
 #include "FlexRayDetectorConstruction.hh"
-
+#include "BCF10Material.hh"
 #include "G4Box.hh"
 #include "G4Colour.hh"
 #include "G4GeometryManager.hh"
@@ -27,34 +27,29 @@ FlexRayDetectorConstruction::~FlexRayDetectorConstruction() {}
 G4VPhysicalVolume*
 FlexRayDetectorConstruction::Construct()
 {
-  //--------- Material definition ---------
-  // manager for NIST materials
-  //G4NistManager* nist = G4NistManager::Instance();
 
-  // Definition of elements
+  /*
+   * Definition of materials
+   */
+  G4NistManager* sNistMan = G4NistManager::Instance();
+  sNistMan->SetVerbose(2);
 
-  G4Element* N = new G4Element("Nitrogen", "N", 7., 14.01 * g / mole);
-  G4Element* O = new G4Element("Oxygen", "O", 8., 16.00 * g / mole);
+  G4Material* Air = sNistMan->FindOrBuildMaterial("G4_AIR");
+  BCF10::Materials materials = BCF10::createMaterials();
 
-  // Definition of materials
-  G4double density;
-  G4int nel;
-
-  // Air
-  G4Material* Air = new G4Material("Air", density = 1.29 * mg / cm3, nel = 2);
-  Air->AddElement(N, 0.7);
-  Air->AddElement(O, 0.3);
-
-  // Print all the materials defined.
-  G4cout << G4endl << "The materials defined are : " << G4endl << G4endl;
+  // print fr materials (for debug purposes mainly)
+  G4cout << G4endl << "The materials defined are : " << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;
+  G4cout << "Material properties table for BCF10 core : " << G4endl;
+  materials.core->GetMaterialPropertiesTable()->DumpTable();
 
-  // Definitions of Solids, Logical Volumes, Physical Volumes ---------
-  G4double fWorldLength = 1.0 * m;
-  G4double HalfWorldLength = 0.5 * fWorldLength;
-
+  /*
+   * Construct the enclosing world
+   */
+  G4double worldLength = 1.0 * m;
+  G4double halfWorldLength = 0.5 * worldLength;
   G4Box* solidWorld =
-    new G4Box("world", HalfWorldLength, HalfWorldLength, HalfWorldLength);
+    new G4Box("world", halfWorldLength, halfWorldLength, halfWorldLength);
   G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, Air, "World");
 
   //  Must place the World Physical volume unrotated at (0,0,0).
@@ -71,6 +66,11 @@ FlexRayDetectorConstruction::Construct()
   G4VisAttributes* WorldVisAtt = new G4VisAttributes(G4Colour(1.0, 1.0, 1.0));
   // Give visualization attributes to the logical volumes
   logicWorld->SetVisAttributes(WorldVisAtt);
+
+  /*
+   * Add call to consturct the scintillating fiber
+   * geometry
+   */
 
   // Return world
   return physiWorld;

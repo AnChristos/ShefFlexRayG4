@@ -1,6 +1,3 @@
-/// \file FlexRayActionInitialization.hh
-/// \brief Definition of the FlexRayActionInitialization class
-
 #ifndef FlexRayActionInitialization_h
 #define FlexRayActionInitialization_h
 
@@ -9,6 +6,7 @@ class FlexRayDetectorConstruction;
 class FlexRayEventAction;
 /// Action initialization class.
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 class FlexRayActionInitialization : public G4VUserActionInitialization
 {
 public:
