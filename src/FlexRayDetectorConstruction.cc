@@ -42,6 +42,10 @@ FlexRayDetectorConstruction::Construct()
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;
   G4cout << "Material properties table for BCF10 core : " << G4endl;
   materials.core->GetMaterialPropertiesTable()->DumpTable();
+  G4cout << "Material properties table for BCF10 clad1 : " << G4endl;
+  materials.clad1->GetMaterialPropertiesTable()->DumpTable();
+  G4cout << "Material properties table for BCF10 clad2 : " << G4endl;
+  materials.clad2->GetMaterialPropertiesTable()->DumpTable();
 
   /*
    * Construct the enclosing world
