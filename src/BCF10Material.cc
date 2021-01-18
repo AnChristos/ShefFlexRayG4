@@ -26,8 +26,9 @@ BCF10::createMaterials()
                                         2.86 * eV, 2.90 * eV, 2.95 * eV,
                                         3.01 * eV, 3.07 * eV };
 
-  G4double core_scintilationSpectra[11] = { 0.00, 0.06, 0.19, 0.36, 0.52, 0.71,
-                                            1.00, 0.88, 0.69, 0.17, 0.00 };
+  G4double core_scintilationSpectra[NUMENTRIES] = { 0.00, 0.06, 0.19, 0.36,
+                                                    0.52, 0.71, 1.00, 0.88,
+                                                    0.69, 0.17, 0.00 };
 
   G4double core_pathLenght[NUMENTRIES] = { 2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m,
                                            2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m,
@@ -77,6 +78,9 @@ BCF10::createMaterials()
 
   G4Material* PMMAClad2 = sNistMan->ConstructNewMaterial(
     "BCF10_PMMAClad2", PMMAelements, PMMAnatoms, PMMAdensity);
-
+   
+  //TODO add optical properties for cladding
+   
+  //
   return { PolystereneCore, PMMAClad1, PMMAClad2 };
 }
