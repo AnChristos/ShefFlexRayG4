@@ -89,4 +89,15 @@
 #
 /run/initialize
 #
-/run/beamOn 1
+# initialize particle source
+/gps/particle gamma
+/gps/pos/type Plane
+/gps/pos/shape Square
+/gps/pos/centre 0 0 -20 cm
+/gps/pos/halfx 5 mm
+/gps/pos/halfy 5 mm
+/gps/direction 0 0 1
+/gps/ene/type Lin
+/gps/ene/min 50 keV
+/gps/ene/max 100 keV
+#/run/beamOn 1
