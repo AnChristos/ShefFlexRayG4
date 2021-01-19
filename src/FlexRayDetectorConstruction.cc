@@ -72,9 +72,44 @@ FlexRayDetectorConstruction::Construct()
   logicWorld->SetVisAttributes(WorldVisAtt);
 
   /*
-   * Add call to consturct the scintillating fiber
-   * geometry
+   * Construct the scintillating fiber geometry
    */
+  
+  G4double fiberLength = 0.2 * m;
+  G4double fiberRadius = 1 * mm;
+  G4double fiberInnerRadius2 = 0.99 * fiberRadius; // inner radius of second cladding
+  G4double fiberInnerRadius1 = 0.96 * fiberRadius; // inner radius of first cladding
+
+  G4Tubs* fiberClad2 = new G4Tubs("OuterCladding", fiberInnerRadius2, fiberRadius, fiberLength/2, 0 * deg, 360 * deg);
+  G4Tubs* fiberClad1 = new G4Tubs("InnerCladding", fiberInnerRadius1, fiberInnerRadius2, fiberLength/2, 0 * deg, 360 * deg);
+  G4Tubs* fiberCore = new G4Tubs("Core", 0, fiberInnerRadius2, fiberLength/2, 0 * deg, 360 * deg);
+
+  G4LogicalVolume *logicFiberClad2 = new G4LogicalVolume(fiberClad2, materials.clad2, "OuterCladding");
+  G4LogicalVolume *logicFiberClad1 = new G4LogicalVolume(fiberClad1, materials.clad1, "InnerCladding");
+  G4LogicalVolume *logicFiberCore = new G4LogicalVolume(fiberCore, materials.core, "Core");
+
+  // construct full fiber (place IC and core inside OC)
+  new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicFiberClad2, false, 0);
+  new G4PVPlacement(0, G4ThreeVector(), logicFiberCore, "Core", logicFiberClad2, false, 0);
+
+  G4int numFibers = 4;
+  G4double fiberSpacing = 2.2 * mm;
+  G4double layerSpacing = 3 * mm;
+
+  G4RotationMatrix *xrot = new G4RotationMatrix();
+  xrot->rotateX(90*deg);
+  G4RotationMatrix *yrot = new G4RotationMatrix();
+  yrot->rotateY(90*deg);
+
+  for(G4int i=0; i<numFibers; i++){
+    G4double offset = (-numFibers * 0.5 + i + 0.5) * fiberSpacing;
+
+    G4ThreeVector xpos(offset, 0, layerSpacing*0.5);
+    new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, i);
+
+    G4ThreeVector ypos(0, offset, -layerSpacing*0.5);
+    new G4PVPlacement(yrot, ypos, logicFiberClad2, "OuterCladdingY", logicWorld, false, i);
+  }
 
   // Return world
   return physiWorld;
