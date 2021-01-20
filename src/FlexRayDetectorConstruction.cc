@@ -151,7 +151,7 @@ FlexRayDetectorConstruction::Construct()
    */
 
   G4double fiberLength = 20 * cm;
-  G4double fiberRadius = 5 * cm;
+  G4double fiberRadius = 5 * mm;
   G4double fiberInnerRadius =
     0.95 * fiberRadius; // inner radius of first cladding
   G4Tubs* fiberClad1 = new G4Tubs("InnerCladding",
