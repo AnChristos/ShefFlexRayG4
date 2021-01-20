@@ -178,7 +178,6 @@ FlexRayDetectorConstruction::Construct()
    */
   G4VPhysicalVolume* physiClad1 = new G4PVPlacement(
     0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicWorld, false, 0,true);
-
   // Return world
   return physiWorld;
 }
