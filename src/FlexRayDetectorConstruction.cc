@@ -89,8 +89,8 @@ FlexRayDetectorConstruction::Construct()
   G4LogicalVolume *logicFiberCore = new G4LogicalVolume(fiberCore, materials.core, "Core");
 
   // construct full fiber (place IC and core inside OC)
-  new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicFiberClad2, false, 0);
-  new G4PVPlacement(0, G4ThreeVector(), logicFiberCore, "Core", logicFiberClad2, false, 0);
+  new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicFiberClad2, false, 0,true);
+  new G4PVPlacement(0, G4ThreeVector(), logicFiberCore, "Core", logicFiberClad2, false, 0,true);
 
   G4int numFibers = 4;
   G4double fiberSpacing = 2.2 * mm;
@@ -105,10 +105,10 @@ FlexRayDetectorConstruction::Construct()
     G4double offset = (-numFibers * 0.5 + i + 0.5) * fiberSpacing;
 
     G4ThreeVector xpos(offset, 0, layerSpacing*0.5);
-    new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, i);
+    new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, i,true);
 
     G4ThreeVector ypos(0, offset, -layerSpacing*0.5);
-    new G4PVPlacement(yrot, ypos, logicFiberClad2, "OuterCladdingY", logicWorld, false, i);
+    new G4PVPlacement(yrot, ypos, logicFiberClad2, "OuterCladdingY", logicWorld, false, i,true);
   }
 
   // Return world
