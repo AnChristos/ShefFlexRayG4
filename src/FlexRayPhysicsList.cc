@@ -10,7 +10,7 @@
 FlexRayPhysicsList::FlexRayPhysicsList()
   : G4VModularPhysicsList()
 {
-  SetVerboseLevel(1);
+  //SetVerboseLevel(1);
 
   // Default physics
   RegisterPhysics(new G4DecayPhysics());

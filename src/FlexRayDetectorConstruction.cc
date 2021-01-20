@@ -36,7 +36,7 @@ FlexRayDetectorConstruction::Construct()
    * Definition of materials
    */
   G4NistManager* sNistMan = G4NistManager::Instance();
-  sNistMan->SetVerbose(2);
+  //sNistMan->SetVerbose(2);
 
   G4Material* Air = sNistMan->FindOrBuildMaterial("G4_AIR");
   BCF10::Materials materials = BCF10::createMaterials();
@@ -88,23 +88,25 @@ FlexRayDetectorConstruction::Construct()
   G4Tubs* fiberClad1 = new G4Tubs("InnerCladding", 0, fiberInnerRadius2, fiberLength/2, 0 * deg, 360 * deg);
   G4Tubs* fiberCore = new G4Tubs("Core", 0, fiberInnerRadius1, fiberLength/2, 0 * deg, 360 * deg);
 
-  G4OpticalSurface *opSurface = new G4OpticalSurface("OpSurface", glisur, ground, dielectric_dielectric, 0.999); //roughness=0.999?
+  // an optical surface might be required at a later stage?
+  //G4OpticalSurface *opSurface = new G4OpticalSurface("OpSurface", glisur, ground, dielectric_dielectric, 0.999); //roughness=0.999?
 
   G4LogicalVolume *logicFiberClad2 = new G4LogicalVolume(fiberClad2, materials.clad2, "OuterCladding");
   G4LogicalVolume *logicFiberClad1 = new G4LogicalVolume(fiberClad1, materials.clad1, "InnerCladding");
   G4LogicalVolume *logicFiberCore = new G4LogicalVolume(fiberCore, materials.core, "Core");
 
   // construct full fiber (place IC and core inside OC)
-  G4VPhysicalVolume *PhysClad1 = new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicFiberClad2, false, 0,true);
-  G4VPhysicalVolume *PhysCore = new G4PVPlacement(0, G4ThreeVector(), logicFiberCore, "Core", logicFiberClad1, false, 0,true);
+  /*G4VPhysicalVolume *PhysClad1 = */new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicFiberClad2, false, 0,true);
+  /*G4VPhysicalVolume *PhysCore = */new G4PVPlacement(0, G4ThreeVector(), logicFiberCore, "Core", logicFiberClad1, false, 0,true);
 
-  new G4LogicalBorderSurface("SurfClad1Out", PhysCore, PhysClad1, opSurface);
-  new G4LogicalBorderSurface("SurfClad1In", PhysClad1, PhysCore, opSurface);
+  // an optical surface might be required at a later stage?
+  //new G4LogicalBorderSurface("SurfClad1Out", PhysCore, PhysClad1, opSurface);
+  //new G4LogicalBorderSurface("SurfClad1In", PhysClad1, PhysCore, opSurface);
 
 
   G4int numFibers = 4;
-  G4double fiberSpacing = 2.2 * mm;
-  G4double layerSpacing = 3 * mm;
+  G4double fiberSpacing = fiberRadius*2 + 0.2 * mm;
+  G4double layerSpacing = fiberRadius*2 + 1 * mm;
 
   G4RotationMatrix *xrot = new G4RotationMatrix();
   xrot->rotateX(90*deg);
@@ -119,6 +121,11 @@ FlexRayDetectorConstruction::Construct()
 
     G4ThreeVector ypos(0, offset, -layerSpacing*0.5);
     new G4PVPlacement(yrot, ypos, logicFiberClad2, "OuterCladdingY", logicWorld, false, i,true);
+
+    if(i == numFibers/2){
+      G4cout << "Fiber Edge: 0 " << (offset + 0.99*fiberRadius)/mm << " " << -layerSpacing*0.5/mm << " mm" << G4endl;
+      G4cout << "Fiber Center: 0 " << offset/mm << " " << -layerSpacing*0.5/mm << " mm" << G4endl;
+    }
   }
 
   // Return world

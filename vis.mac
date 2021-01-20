@@ -43,8 +43,8 @@
 /vis/geometry/set/visibility World 0 false
 # Color the fibers
 /vis/geometry/set/colour OuterCladding 0 1 1 1 0.1
-/vis/geometry/set/colour InnerCladding 0 1 1 1 0.1
-/vis/geometry/set/colour Core 0 1 1 1 0.1
+/vis/geometry/set/colour InnerCladding 0 0.4 0.8 0.4 0.5
+/vis/geometry/set/colour Core 0 0.4 0.4 0.8 1
 /vis/viewer/set/style surface
 
 
@@ -58,7 +58,7 @@
 /vis/scene/add/trajectories smooth
 /vis/modeling/trajectories/create/drawByCharge
 /vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
-/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 1
+/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 3
 # (if too many tracks cause core dump => /tracking/storeTrajectory 0)
 #
 # Draw hits at end of event:
@@ -88,16 +88,6 @@
 #/vis/viewer/flush
 #
 /run/initialize
+/vis/viewer/set/targetPoint 0 0 0 m
+
 #
-# initialize particle source
-/gps/particle gamma
-/gps/pos/type Plane
-/gps/pos/shape Square
-/gps/pos/centre 0 0 -20 cm
-/gps/pos/halfx 5 mm
-/gps/pos/halfy 5 mm
-/gps/direction 0 0 1
-/gps/ene/type Lin
-/gps/ene/min 50 keV
-/gps/ene/max 100 keV
-#/run/beamOn 1
