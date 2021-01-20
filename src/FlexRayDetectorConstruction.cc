@@ -3,9 +3,11 @@
 #include "G4Box.hh"
 #include "G4Colour.hh"
 #include "G4GeometryManager.hh"
+#include "G4LogicalBorderSurface.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4NistManager.hh"
+#include "G4OpticalSurface.hh"
 #include "G4PVPlacement.hh"
 #include "G4Tubs.hh"
 #include "G4UserLimits.hh"
@@ -33,20 +35,91 @@ FlexRayDetectorConstruction::Construct()
    */
   G4NistManager* sNistMan = G4NistManager::Instance();
   sNistMan->SetVerbose(2);
+  // Air
+  G4Material* Air = new G4Material("Air", 1.29 * mg / cm3, 2);
+  G4Element* N = new G4Element("Nitrogen", "N", 7., 14.01 * g / mole);
+  G4Element* O = new G4Element("Oxygen", "O", 8., 16.00 * g / mole);
+  Air->AddElement(N, 70 * perCent);
+  Air->AddElement(O, 30 * perCent);
+  G4MaterialPropertiesTable* AIR_MPT = new G4MaterialPropertiesTable();
+  AIR_MPT->AddConstProperty("RINDEX", 1.0);
+  Air->SetMaterialPropertiesTable(AIR_MPT);
 
-  G4Material* Air = sNistMan->FindOrBuildMaterial("G4_AIR");
-  BCF10::Materials materials = BCF10::createMaterials();
+  /*
+   *
+   * MAterials for BCF10
+   */
+  using namespace BCF10;
+  // Core
+  // Use the existing polysterene but alter density
+  // according to the catalogue (1.06 -> 1.05)
+
+  // Polysterene C8 O8
+  std::vector<G4int> Polysterenenatoms = { 8, 8 };
+  std::vector<G4String> Polystereneelements = { "C", "H" };
+  G4double polysterenedensity = 1.05 * g / cm3;
+
+  G4Material* PolystereneCore =
+    sNistMan->ConstructNewMaterial("BCF10_Polysterene",
+                                   Polystereneelements,
+                                   Polysterenenatoms,
+                                   polysterenedensity);
+  G4MaterialPropertiesTable* BCF10_Polysterene_MPT =
+    new G4MaterialPropertiesTable();
+
+  BCF10_Polysterene_MPT->AddProperty(
+    "RINDEX", core_photonEnergy, core_RefractiveIndex, NUMENTRIES);
+
+  BCF10_Polysterene_MPT->AddProperty(
+    "ABSLENGTH", core_photonEnergy, core_pathLenght, NUMENTRIES);
+
+  BCF10_Polysterene_MPT->AddProperty(
+    "FASTCOMPONENT", core_photonEnergy, core_scintilationSpectra, NUMENTRIES);
+
+  BCF10_Polysterene_MPT->AddConstProperty("SCINTILLATIONYIELD",
+                                          core_scintilationYield);
+
+  BCF10_Polysterene_MPT->AddConstProperty("RESOLUTIONSCALE",
+                                          core_resolutionScale);
+
+  BCF10_Polysterene_MPT->AddConstProperty("FASTTIMECONSTANT",
+                                          core_decayTimeConstant);
+
+  BCF10_Polysterene_MPT->AddConstProperty("YIELDRATIO", core_YieldRatio);
+
+  PolystereneCore->SetMaterialPropertiesTable(BCF10_Polysterene_MPT);
+  // Set Birk's constant
+  PolystereneCore->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
+
+  // PMMA C5 O2 H8
+  std::vector<G4int> PMMAnatoms = { 5, 8, 2 };
+  std::vector<G4String> PMMAelements = { "C", "H", "O" };
+  G4double PMMAdensity = 1.190 * g / cm3;
+
+  // Clad1
+  G4Material* PMMAClad1 = sNistMan->ConstructNewMaterial(
+    "BCF10_PMMAClad1", PMMAelements, PMMAnatoms, PMMAdensity);
+
+  G4MaterialPropertiesTable* BCF10_PMMAClad1_MPT =
+    new G4MaterialPropertiesTable();
+
+  BCF10_PMMAClad1_MPT->AddProperty(
+    "RINDEX", core_photonEnergy, clad1_RefractiveIndex, NUMENTRIES);
+
+  BCF10_PMMAClad1_MPT->AddProperty(
+    "ABSLENGTH", clad_photonEnergy, clad_pathLenght, NUMENTRIESCLAD);
+  PMMAClad1->SetMaterialPropertiesTable(BCF10_PMMAClad1_MPT);
 
   // print fr materials (for debug purposes mainly)
   G4cout << G4endl << "The materials defined are : " << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;
-  G4cout << "Material properties table for BCF10 core : " << G4endl;
-  materials.core->GetMaterialPropertiesTable()->DumpTable();
-  G4cout << "Material properties table for BCF10 clad1 : " << G4endl;
-  materials.clad1->GetMaterialPropertiesTable()->DumpTable();
-  G4cout << "Material properties table for BCF10 clad2 : " << G4endl;
-  materials.clad2->GetMaterialPropertiesTable()->DumpTable();
+  G4cout << "Material properties for AIR: " << G4endl;
+  Air->GetMaterialPropertiesTable()->DumpTable();
 
+  G4cout << "Material properties table for BCF10 core : " << G4endl;
+  PolystereneCore->GetMaterialPropertiesTable()->DumpTable();
+  G4cout << "Material properties table for BCF10 clad1 : " << G4endl;
+  PMMAClad1->GetMaterialPropertiesTable()->DumpTable();
   /*
    * Construct the enclosing world
    */
@@ -66,50 +139,45 @@ FlexRayDetectorConstruction::Construct()
                       false,           // no boolean operations
                       0);              // copy number
 
-  // Visualization attributes
-  G4VisAttributes* WorldVisAtt = new G4VisAttributes(G4Colour(1.0, 1.0, 1.0));
-  // Give visualization attributes to the logical volumes
-  logicWorld->SetVisAttributes(WorldVisAtt);
-
+  /*
+   * Create an optical surface
+   */
+  G4OpticalSurface* opSurface = new G4OpticalSurface("polish");
+  opSurface->SetModel(glisur);
+  opSurface->SetType(dielectric_dielectric);
+  opSurface->SetFinish(polished);
   /*
    * Construct the scintillating fiber geometry
    */
-  
-  G4double fiberLength = 0.2 * m;
-  G4double fiberRadius = 1 * mm;
-  G4double fiberInnerRadius2 = 0.99 * fiberRadius; // inner radius of second cladding
-  G4double fiberInnerRadius1 = 0.96 * fiberRadius; // inner radius of first cladding
 
-  G4Tubs* fiberClad2 = new G4Tubs("OuterCladding", fiberInnerRadius2, fiberRadius, fiberLength/2, 0 * deg, 360 * deg);
-  G4Tubs* fiberClad1 = new G4Tubs("InnerCladding", fiberInnerRadius1, fiberInnerRadius2, fiberLength/2, 0 * deg, 360 * deg);
-  G4Tubs* fiberCore = new G4Tubs("Core", 0, fiberInnerRadius2, fiberLength/2, 0 * deg, 360 * deg);
+  G4double fiberLength = 20 * cm;
+  G4double fiberRadius = 5 * cm;
+  G4double fiberInnerRadius =
+    0.95 * fiberRadius; // inner radius of first cladding
+  G4Tubs* fiberClad1 = new G4Tubs("InnerCladding",
+                                  fiberInnerRadius,
+                                  fiberRadius,
+                                  fiberLength / 2,
+                                  0 * deg,
+                                  360 * deg);
+  G4Tubs* fiberCore = new G4Tubs(
+    "Core", 0, fiberInnerRadius, fiberLength / 2, 0 * deg, 360 * deg);
 
-  G4LogicalVolume *logicFiberClad2 = new G4LogicalVolume(fiberClad2, materials.clad2, "OuterCladding");
-  G4LogicalVolume *logicFiberClad1 = new G4LogicalVolume(fiberClad1, materials.clad1, "InnerCladding");
-  G4LogicalVolume *logicFiberCore = new G4LogicalVolume(fiberCore, materials.core, "Core");
+  G4LogicalVolume* logicFiberClad1 =
+    new G4LogicalVolume(fiberClad1, PMMAClad1, "InnerCladding");
+  G4LogicalVolume* logicFiberCore =
+    new G4LogicalVolume(fiberCore, PolystereneCore, "Core");
+  /*
+   * place core into clad1
+   */
+  G4VPhysicalVolume* physiCore = new G4PVPlacement(
+    0, G4ThreeVector(), logicFiberCore, "Core", logicFiberClad1, false, 0,true);
 
-  // construct full fiber (place IC and core inside OC)
-  new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicFiberClad2, false, 0);
-  new G4PVPlacement(0, G4ThreeVector(), logicFiberCore, "Core", logicFiberClad2, false, 0);
-
-  G4int numFibers = 4;
-  G4double fiberSpacing = 2.2 * mm;
-  G4double layerSpacing = 3 * mm;
-
-  G4RotationMatrix *xrot = new G4RotationMatrix();
-  xrot->rotateX(90*deg);
-  G4RotationMatrix *yrot = new G4RotationMatrix();
-  yrot->rotateY(90*deg);
-
-  for(G4int i=0; i<numFibers; i++){
-    G4double offset = (-numFibers * 0.5 + i + 0.5) * fiberSpacing;
-
-    G4ThreeVector xpos(offset, 0, layerSpacing*0.5);
-    new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, i);
-
-    G4ThreeVector ypos(0, offset, -layerSpacing*0.5);
-    new G4PVPlacement(yrot, ypos, logicFiberClad2, "OuterCladdingY", logicWorld, false, i);
-  }
+  /*
+   * place clad1 into world
+   */
+  G4VPhysicalVolume* physiClad1 = new G4PVPlacement(
+    0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicWorld, false, 0,true);
 
   // Return world
   return physiWorld;

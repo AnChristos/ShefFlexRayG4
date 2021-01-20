@@ -2,6 +2,8 @@
 
 #include "G4DecayPhysics.hh"
 #include "G4EmStandardPhysics.hh"
+#include "FTFP_BERT.hh"
+#include "G4EmStandardPhysics_option4.hh"
 #include "G4RadioactiveDecayPhysics.hh"
 #include "G4OpticalPhysics.hh"
 
@@ -16,13 +18,18 @@ FlexRayPhysicsList::FlexRayPhysicsList()
   RegisterPhysics(new G4DecayPhysics());
 
   // EM physics
-  RegisterPhysics(new G4EmStandardPhysics());
+  G4EmStandardPhysics_option4* emPhysics = new G4EmStandardPhysics_option4();
+  emPhysics->SetVerboseLevel(2);
+  RegisterPhysics(emPhysics);
 
   // Radioactive decay
   RegisterPhysics(new G4RadioactiveDecayPhysics());
 
   // Optical Physics
-  RegisterPhysics(new G4OpticalPhysics());
+  G4OpticalPhysics* opticalPhysics = new G4OpticalPhysics();
+  opticalPhysics->SetVerboseLevel(2);
+  RegisterPhysics(opticalPhysics);
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
