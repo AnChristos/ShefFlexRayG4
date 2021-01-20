@@ -12,6 +12,10 @@
 #include "G4VisAttributes.hh"
 #include "G4ios.hh"
 
+#include "G4OpticalSurface.hh"
+#include "G4LogicalBorderSurface.hh"
+#include "G4VPhysicalVolume.hh"
+
 using namespace CLHEP;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -80,17 +84,23 @@ FlexRayDetectorConstruction::Construct()
   G4double fiberInnerRadius2 = 0.99 * fiberRadius; // inner radius of second cladding
   G4double fiberInnerRadius1 = 0.96 * fiberRadius; // inner radius of first cladding
 
-  G4Tubs* fiberClad2 = new G4Tubs("OuterCladding", fiberInnerRadius2, fiberRadius, fiberLength/2, 0 * deg, 360 * deg);
-  G4Tubs* fiberClad1 = new G4Tubs("InnerCladding", fiberInnerRadius1, fiberInnerRadius2, fiberLength/2, 0 * deg, 360 * deg);
-  G4Tubs* fiberCore = new G4Tubs("Core", 0, fiberInnerRadius2, fiberLength/2, 0 * deg, 360 * deg);
+  G4Tubs* fiberClad2 = new G4Tubs("OuterCladding", 0, fiberRadius, fiberLength/2, 0 * deg, 360 * deg);
+  G4Tubs* fiberClad1 = new G4Tubs("InnerCladding", 0, fiberInnerRadius2, fiberLength/2, 0 * deg, 360 * deg);
+  G4Tubs* fiberCore = new G4Tubs("Core", 0, fiberInnerRadius1, fiberLength/2, 0 * deg, 360 * deg);
+
+  G4OpticalSurface *opSurface = new G4OpticalSurface("OpSurface", glisur, ground, dielectric_dielectric, 0.999); //roughness=0.999?
 
   G4LogicalVolume *logicFiberClad2 = new G4LogicalVolume(fiberClad2, materials.clad2, "OuterCladding");
   G4LogicalVolume *logicFiberClad1 = new G4LogicalVolume(fiberClad1, materials.clad1, "InnerCladding");
   G4LogicalVolume *logicFiberCore = new G4LogicalVolume(fiberCore, materials.core, "Core");
 
   // construct full fiber (place IC and core inside OC)
-  new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicFiberClad2, false, 0,true);
-  new G4PVPlacement(0, G4ThreeVector(), logicFiberCore, "Core", logicFiberClad2, false, 0,true);
+  G4VPhysicalVolume *PhysClad1 = new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicFiberClad2, false, 0,true);
+  G4VPhysicalVolume *PhysCore = new G4PVPlacement(0, G4ThreeVector(), logicFiberCore, "Core", logicFiberClad1, false, 0,true);
+
+  new G4LogicalBorderSurface("SurfClad1Out", PhysCore, PhysClad1, opSurface);
+  new G4LogicalBorderSurface("SurfClad1In", PhysClad1, PhysCore, opSurface);
+
 
   G4int numFibers = 4;
   G4double fiberSpacing = 2.2 * mm;

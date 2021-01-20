@@ -17,7 +17,10 @@ G4double core_pathLenght[NUMENTRIES] = { 2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m,
                                          2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m,
                                          2.2 * m, 2.2 * m, 2.2 * m };
 
-const G4double core_RefractiveIndex = 1.6;
+G4double rEnergies[2] = {2*eV, 3.5*eV};
+
+//const G4double core_RefractiveIndex = 1.6;
+G4double core_rIndex[2] = {1.6, 1.6};
 
 const G4double core_scintilationYield = 8000 / MeV;
 
@@ -51,8 +54,12 @@ G4double clad_pathLenght[NUMENTRIESCLAD] = {
   1. * mm
 };
 
-const G4double clad1_RefractiveIndex = 1.49;
-const G4double clad2_RefractiveIndex = 1.42;
+//const G4double clad1_RefractiveIndex = 1.49;
+//const G4double clad2_RefractiveIndex = 1.42;
+
+G4double clad1_rIndex[2] = {1.49, 1.49};
+G4double clad2_rIndex[2] = {1.42, 1.42};
+
 
 }
 
@@ -73,7 +80,8 @@ BCF10::createMaterials()
   G4MaterialPropertiesTable* BCF10_Polysterene_MPT =
     new G4MaterialPropertiesTable();
 
-  BCF10_Polysterene_MPT->AddConstProperty("RINDEX", core_RefractiveIndex);
+  //BCF10_Polysterene_MPT->AddConstProperty("RINDEX", core_RefractiveIndex);
+  BCF10_Polysterene_MPT->AddProperty("RINDEX", rEnergies, core_rIndex, 2);
 
   BCF10_Polysterene_MPT->AddProperty(
     "ABSLENGTH", core_photonEnergy, core_pathLenght, NUMENTRIES);
@@ -105,7 +113,8 @@ BCF10::createMaterials()
 
   G4MaterialPropertiesTable* BCF10_PMMAClad1_MPT =
     new G4MaterialPropertiesTable();
-  BCF10_PMMAClad1_MPT->AddConstProperty("RINDEX", clad1_RefractiveIndex);
+  //BCF10_PMMAClad1_MPT->AddConstProperty("RINDEX", clad1_RefractiveIndex);
+  BCF10_PMMAClad1_MPT->AddProperty("RINDEX", rEnergies, clad1_rIndex, 2);
 
   BCF10_PMMAClad1_MPT->AddProperty(
     "ABSLENGTH", clad_photonEnergy, clad_pathLenght, NUMENTRIESCLAD);
@@ -116,7 +125,8 @@ BCF10::createMaterials()
     "BCF10_PMMAClad2", PMMAelements, PMMAnatoms, PMMAdensity);
   G4MaterialPropertiesTable* BCF10_PMMAClad2_MPT =
     new G4MaterialPropertiesTable();
-  BCF10_PMMAClad2_MPT->AddConstProperty("RINDEX", clad2_RefractiveIndex);
+  //BCF10_PMMAClad2_MPT->AddConstProperty("RINDEX", clad2_RefractiveIndex);
+  BCF10_PMMAClad2_MPT->AddProperty("RINDEX", rEnergies, clad2_rIndex, 2);
 
   BCF10_PMMAClad2_MPT->AddProperty(
     "ABSLENGTH", clad_photonEnergy, clad_pathLenght, NUMENTRIESCLAD);
