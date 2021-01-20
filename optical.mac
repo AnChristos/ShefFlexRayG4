@@ -5,14 +5,14 @@
 #/tracking/verbose 1
 #
 /gps/particle opticalphoton
-/gps/polarization 0 0 1
+/gps/polarization 0 1 0
 /gps/ene/type Mono
 /gps/ene/mono 2.87 eV
 
 #With current geometry:
 #Fiber Edge: 0 2.09 -1.5 mm
 #Fiber Center: 0 1.1 -1.5 mm
-/gps/position 0 1.1 -1.5 mm
+/gps/position 0 1.0 -1.5 mm
 
 /gps/ang/type iso
 /gps/ang/mintheta 0.0 deg

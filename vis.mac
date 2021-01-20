@@ -42,9 +42,10 @@
 # Make the "World" box invisible
 /vis/geometry/set/visibility World 0 false
 # Color the fibers
-/vis/geometry/set/colour OuterCladding 0 1 1 1 0.1
-/vis/geometry/set/colour InnerCladding 0 0.4 0.8 0.4 0.5
-/vis/geometry/set/colour Core 0 0.4 0.4 0.8 1
+/vis/geometry/set/colour OuterCladding 0  0 0 0 0.15
+/vis/geometry/set/colour InnerCladding 0 1 0.66 0.0 0.3
+#blue
+/vis/geometry/set/colour Core 0 0.52 0.80 0.92 0.8
 /vis/viewer/set/style surface
 
 
@@ -89,5 +90,18 @@
 #
 /run/initialize
 /vis/viewer/set/targetPoint 0 0 0 m
+
+#Optical photon gun
+/gps/particle opticalphoton
+/gps/polarization 0 1 0
+/gps/ene/type Mono
+/gps/ene/mono 2.87 eV
+#With current geometry:
+#Fiber Edge: 0 2.09 -1.5 mm
+#Fiber Center: 0 1.1 -1.5 mm
+/gps/position 0 1.0 -1.5 mm
+/gps/ang/type iso
+/gps/ang/mintheta 0.0 deg
+/gps/ang/maxtheta 180.0 deg
 
 #
