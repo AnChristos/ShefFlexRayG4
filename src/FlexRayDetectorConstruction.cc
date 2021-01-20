@@ -151,33 +151,47 @@ FlexRayDetectorConstruction::Construct()
    */
 
   G4double fiberLength = 20 * cm;
-  G4double fiberRadius = 5 * mm;
-  G4double fiberInnerRadius =
-    0.95 * fiberRadius; // inner radius of first cladding
+  // inner radius of first cladding
+  G4double fiberCoreRadius = 4.75 * mm;
+  G4double cladThickness = 0.25 * mm;
+
   G4Tubs* fiberClad1 = new G4Tubs("InnerCladding",
-                                  fiberInnerRadius,
-                                  fiberRadius,
+                                  fiberCoreRadius,
+                                  fiberCoreRadius + cladThickness,
                                   fiberLength / 2,
                                   0 * deg,
                                   360 * deg);
-  G4Tubs* fiberCore = new G4Tubs(
-    "Core", 0, fiberInnerRadius, fiberLength / 2, 0 * deg, 360 * deg);
+  G4Tubs* fiberCore =
+    new G4Tubs("Core", 0, fiberCoreRadius, fiberLength / 2, 0 * deg, 360 * deg);
 
   G4LogicalVolume* logicFiberClad1 =
     new G4LogicalVolume(fiberClad1, PMMAClad1, "InnerCladding");
   G4LogicalVolume* logicFiberCore =
     new G4LogicalVolume(fiberCore, PolystereneCore, "Core");
   /*
-   * place core into clad1
-   */
-  G4VPhysicalVolume* physiCore = new G4PVPlacement(
-    0, G4ThreeVector(), logicFiberCore, "Core", logicFiberClad1, false, 0,true);
-
-  /*
    * place clad1 into world
    */
-  G4VPhysicalVolume* physiClad1 = new G4PVPlacement(
-    0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicWorld, false, 0,true);
+  G4VPhysicalVolume* physiClad1 = new G4PVPlacement(0,
+                                                    G4ThreeVector(0,0,0),
+                                                    logicFiberClad1,
+                                                    "InnerCladding",
+                                                    logicWorld,
+                                                    false,
+                                                    0,
+                                                    true);
+
+  /*
+   * place core into clad1
+   */
+  G4VPhysicalVolume* physiCore = new G4PVPlacement(0,
+                                                   G4ThreeVector(0.,0.,0.),
+                                                   logicFiberCore,
+                                                   "Core",
+                                                   logicWorld,
+                                                   false,
+                                                   0,
+                                                   true);
+
   // Return world
   return physiWorld;
 }
