@@ -1,8 +1,10 @@
 #include "FlexRayDetectorConstruction.hh"
+#include "FlexRayRunAction.hh"
 #include "FlexRayEventAction.hh"
 #include "FlexRayPhysicsList.hh"
 #include "FlexRayPrimaryGeneratorAction.hh"
 #include "FlexRaySteppingAction.hh"
+#include "FlexRayTrackingAction.hh"
 
 #include "G4OpticalPhysics.hh"
 #include "G4RunManager.hh"
@@ -42,14 +44,20 @@ main(int argc, char** argv)
    
   // User Action classes
   //
-  G4VUserPrimaryGeneratorAction* gen_action = new FlexRayPrimaryGeneratorAction(detector);
-  runManager->SetUserAction(gen_action);
+  G4VUserPrimaryGeneratorAction* genAction = new FlexRayPrimaryGeneratorAction(detector);
+  runManager->SetUserAction(genAction);
   //
-  FlexRayEventAction* eventAction = new FlexRayEventAction();
+  FlexRayRunAction* runAction = new FlexRayRunAction();
+  runManager->SetUserAction(runAction);
+  //
+  FlexRayEventAction* eventAction = new FlexRayEventAction(runAction);
   runManager->SetUserAction(eventAction);
   //
-  G4UserSteppingAction* stepping_action = new FlexRaySteppingAction(eventAction);
-  runManager->SetUserAction(stepping_action);
+  G4UserSteppingAction* steppingAction = new FlexRaySteppingAction(eventAction);
+  runManager->SetUserAction(steppingAction);
+  //
+  G4UserTrackingAction* trackingAction = new FlexRayTrackingAction(eventAction);
+  runManager->SetUserAction(trackingAction);
 
   // Initialize G4 kernel
   //

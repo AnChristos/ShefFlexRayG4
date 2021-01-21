@@ -5,9 +5,9 @@
 #define FlexRayEventAction_h 
 
 #include "G4UserEventAction.hh"
+#include "G4Event.hh"
+#include "FlexRayRunAction.hh"
 #include "globals.hh"
-
-class FlexRayRunAction;
 
 /// Event action class
 ///
@@ -15,12 +15,16 @@ class FlexRayRunAction;
 class FlexRayEventAction : public G4UserEventAction
 {
 public:
-  FlexRayEventAction();
+  FlexRayEventAction(FlexRayRunAction *runAction);
   virtual ~FlexRayEventAction();
   virtual void BeginOfEventAction(const G4Event* event) override;
   virtual void EndOfEventAction(const G4Event* event) override;
 
+  void LogDetection(G4double energy, G4double time);
+
 private:
+  FlexRayRunAction *fRunAction;
+  G4bool fDetected;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -33,7 +33,7 @@ void
 FlexRayActionInitialization::Build() const
 {
   SetUserAction(new FlexRayPrimaryGeneratorAction(fDetector));
-  SetUserAction(new FlexRayEventAction);
+  SetUserAction(new FlexRayEventAction(nullptr));
   SetUserAction(new FlexRaySteppingAction(fEventAction));
 }
 
