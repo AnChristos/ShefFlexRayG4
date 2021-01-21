@@ -6,17 +6,32 @@
 #
 /gps/particle opticalphoton
 /gps/polarization 0 1 0
-/gps/ene/type Mono
-/gps/ene/mono 2.87 eV
+/gps/ene/type Arb
+/gps/hist/type arb
+# default energy units are MeV
+/gps/hist/point 0.00000232 0.0
+/gps/hist/point 0.00000245 0.06
+/gps/hist/point 0.00000259 0.19
+/gps/hist/point 0.00000265 0.36
+/gps/hist/point 0.00000270 0.52
+/gps/hist/point 0.00000280 0.71
+/gps/hist/point 0.00000287 1.00
+/gps/hist/point 0.00000291 0.88
+/gps/hist/point 0.00000296 0.69
+/gps/hist/point 0.00000301 0.17
+/gps/hist/point 0.00000307 0.0
+/gps/hist/inter Lin
 
 #With current geometry:
-#Fiber Edge: 0 2.09 -1.5 mm
+#Fiber Front: 0 1.1 -0.5496 mm
 #Fiber Center: 0 1.1 -1.5 mm
-/gps/position 0 1.0 -1.5 mm
+#Fiber Back: 0 1.1 -2.4504 mm
+#Fiber Edge: 0 2.0504 -1.5 mm
+/gps/position 0 1.1 -1.5 mm
 
-/gps/ang/type iso
+/gps/ang/type cos
 /gps/ang/mintheta 0.0 deg
-/gps/ang/maxtheta 180.0 deg
+/gps/ang/maxtheta 90.0 deg
 #
 #
 /run/beamOn 100

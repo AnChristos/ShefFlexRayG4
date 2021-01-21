@@ -123,8 +123,10 @@ FlexRayDetectorConstruction::Construct()
     new G4PVPlacement(yrot, ypos, logicFiberClad2, "OuterCladdingY", logicWorld, false, i,true);
 
     if(i == numFibers/2){
-      G4cout << "Fiber Edge: 0 " << (offset + 0.99*fiberRadius)/mm << " " << -layerSpacing*0.5/mm << " mm" << G4endl;
+      G4cout << "Fiber Front: 0 " << offset/mm << " " << -layerSpacing*0.5/mm + fiberInnerRadius1*0.99 << " mm" << G4endl;
       G4cout << "Fiber Center: 0 " << offset/mm << " " << -layerSpacing*0.5/mm << " mm" << G4endl;
+      G4cout << "Fiber Back: 0 " << offset/mm << " " << -layerSpacing*0.5/mm - fiberInnerRadius1*0.99 << " mm" << G4endl;
+      G4cout << "Fiber Edge: 0 " << offset/mm  + fiberInnerRadius1*0.99 << " " << -layerSpacing*0.5/mm << " mm" << G4endl;
     }
   }
 
