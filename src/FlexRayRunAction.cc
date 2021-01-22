@@ -4,19 +4,30 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 FlexRayRunAction::FlexRayRunAction()
 : G4UserRunAction(),
-  fNumDetected(0)
-{}
+  fNumDetected(0),
+  fAnalysisManager(G4RootAnalysisManager::Instance())
+{
+  fAnalysisManager->CreateNtuple("Photons", "Optical Photons Detected");
+  fAnalysisManager->CreateNtupleIColumn("event");
+  fAnalysisManager->CreateNtupleIColumn("detector");
+  fAnalysisManager->CreateNtupleDColumn("energy");
+  fAnalysisManager->CreateNtupleDColumn("time");
+  fAnalysisManager->FinishNtuple();
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-FlexRayRunAction::~FlexRayRunAction() {}
+FlexRayRunAction::~FlexRayRunAction()
+{
+  delete fAnalysisManager;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void FlexRayRunAction::BeginOfRunAction(const G4Run*)
 {
   fNumDetected = 0;
-
+  fAnalysisManager->OpenFile("FlexRay.root");
   // This method is called at the beginning of each run.
   // We can use it to initialize variables, arrays, etc.
 }
@@ -35,6 +46,9 @@ void FlexRayRunAction::EndOfRunAction(const G4Run* run)
   G4cout << nEvents << " Events, " << fNumDetected << " Detected" << G4endl;
   G4cout << "Efficiency: " << (G4double)fNumDetected / nEvents << G4endl;
   G4cout << G4endl << "------------------------------------------------------------" << G4endl;
+
+  fAnalysisManager->Write();
+  fAnalysisManager->CloseFile();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

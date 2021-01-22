@@ -79,14 +79,14 @@ FlexRayDetectorConstruction::Construct()
    * Construct the scintillating fiber geometry
    */
   
-  G4double fiberLength = 0.2 * m;
+  /*G4double*/ fFiberLength = 0.2 * m;
   G4double fiberRadius = 1 * mm;
   G4double fiberInnerRadius2 = 0.99 * fiberRadius; // inner radius of second cladding
   G4double fiberInnerRadius1 = 0.96 * fiberRadius; // inner radius of first cladding
 
-  G4Tubs* fiberClad2 = new G4Tubs("OuterCladding", 0, fiberRadius, fiberLength/2, 0 * deg, 360 * deg);
-  G4Tubs* fiberClad1 = new G4Tubs("InnerCladding", 0, fiberInnerRadius2, fiberLength/2, 0 * deg, 360 * deg);
-  G4Tubs* fiberCore = new G4Tubs("Core", 0, fiberInnerRadius1, fiberLength/2, 0 * deg, 360 * deg);
+  G4Tubs* fiberClad2 = new G4Tubs("OuterCladding", 0, fiberRadius, fFiberLength/2, 0 * deg, 360 * deg);
+  G4Tubs* fiberClad1 = new G4Tubs("InnerCladding", 0, fiberInnerRadius2, fFiberLength/2, 0 * deg, 360 * deg);
+  G4Tubs* fiberCore = new G4Tubs("Core", 0, fiberInnerRadius1, fFiberLength/2, 0 * deg, 360 * deg);
 
   // an optical surface might be required at a later stage?
   //G4OpticalSurface *opSurface = new G4OpticalSurface("OpSurface", glisur, ground, dielectric_dielectric, 0.999); //roughness=0.999?
@@ -104,8 +104,8 @@ FlexRayDetectorConstruction::Construct()
   //new G4LogicalBorderSurface("SurfClad1In", PhysClad1, PhysCore, opSurface);
 
 
-  G4int numFibers = 4;
-  G4double fiberSpacing = fiberRadius*2 + 0.2 * mm;
+  /*G4int*/ fNumFibers = 4;
+  /*G4double*/ fFiberSpacing = fiberRadius*2 + 0.2 * mm;
   G4double layerSpacing = fiberRadius*2 + 1 * mm;
 
   G4RotationMatrix *xrot = new G4RotationMatrix();
@@ -113,8 +113,8 @@ FlexRayDetectorConstruction::Construct()
   G4RotationMatrix *yrot = new G4RotationMatrix();
   yrot->rotateY(90*deg);
 
-  for(G4int i=0; i<numFibers; i++){
-    G4double offset = (-numFibers * 0.5 + i + 0.5) * fiberSpacing;
+  for(G4int i=0; i<fNumFibers; i++){
+    G4double offset = (-fNumFibers * 0.5 + i + 0.5) * fFiberSpacing;
 
     G4ThreeVector xpos(offset, 0, layerSpacing*0.5);
     new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, i,true);
@@ -122,7 +122,7 @@ FlexRayDetectorConstruction::Construct()
     G4ThreeVector ypos(0, offset, -layerSpacing*0.5);
     new G4PVPlacement(yrot, ypos, logicFiberClad2, "OuterCladdingY", logicWorld, false, i,true);
 
-    if(i == numFibers/2){
+    if(i == fNumFibers/2){
       G4cout << "Fiber Front: 0 " << offset/mm << " " << -layerSpacing*0.5/mm + fiberInnerRadius1*0.99 << " mm" << G4endl;
       G4cout << "Fiber Center: 0 " << offset/mm << " " << -layerSpacing*0.5/mm << " mm" << G4endl;
       G4cout << "Fiber Back: 0 " << offset/mm << " " << -layerSpacing*0.5/mm - fiberInnerRadius1*0.99 << " mm" << G4endl;

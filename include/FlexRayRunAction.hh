@@ -5,6 +5,7 @@
 #define FlexRayRunAction_h 
 
 #include "G4UserRunAction.hh"
+#include "G4RootAnalysisManager.hh"
 #include "G4Run.hh"
 #include "globals.hh"
 
@@ -23,7 +24,8 @@ public:
   void LogDetected() {fNumDetected++;};
 
 private:
-  int fNumDetected;
+  G4int fNumDetected;
+  G4RootAnalysisManager *fAnalysisManager;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
