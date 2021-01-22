@@ -10,7 +10,7 @@
 FlexRayEventAction::FlexRayEventAction(FlexRayRunAction *runAction)
 : G4UserEventAction(),
   fRunAction(runAction),
-  fDetected(false),
+  fDetected(0),
   fAnalysisManager(G4RootAnalysisManager::Instance())
 {}
 
@@ -23,7 +23,7 @@ FlexRayEventAction::~FlexRayEventAction() {}
 void FlexRayEventAction::BeginOfEventAction(const G4Event* event)
 {
   fEventID = event->GetEventID();
-  fDetected = false;
+  fDetected = 0;
   // This method is called at the beginning of each event.
   // We can use it to initialize variables, arrays, etc.
 }
@@ -36,7 +36,8 @@ void FlexRayEventAction::EndOfEventAction(const G4Event*)
   // We can use it to make calculations or simply to write collected data
   // to the output file.
 
-  if(fDetected) fRunAction->LogDetected();
+  if(fDetected > 0) fRunAction->LogDetected();
+  fAnalysisManager->FillH1(0, fDetected);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -44,7 +45,7 @@ void FlexRayEventAction::EndOfEventAction(const G4Event*)
 void FlexRayEventAction::LogDetection(int detectorIndex, G4double energy, G4double time)
 {
   // add some histograms or a TTree of energy and time
-  fDetected = true;
+  fDetected |= (1 << (detectorIndex>>8));
   fAnalysisManager->FillNtupleIColumn(0, fEventID);
   fAnalysisManager->FillNtupleIColumn(1, detectorIndex);
   fAnalysisManager->FillNtupleDColumn(2, energy/eV);

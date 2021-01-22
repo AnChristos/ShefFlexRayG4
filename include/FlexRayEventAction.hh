@@ -25,7 +25,7 @@ public:
 
 private:
   FlexRayRunAction *fRunAction;
-  G4bool fDetected;
+  G4int fDetected;
   G4RootAnalysisManager *fAnalysisManager;
   G4int fEventID;
 };

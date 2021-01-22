@@ -13,6 +13,14 @@ FlexRayRunAction::FlexRayRunAction()
   fAnalysisManager->CreateNtupleDColumn("energy");
   fAnalysisManager->CreateNtupleDColumn("time");
   fAnalysisManager->FinishNtuple();
+
+  // detectors lit up from a single x-ray:
+  // 0: none
+  // 1, 2, 4, 8: one end of one fiber
+  // 3: both ends of an x-measurement
+  // 12: both ends of a y-measurement
+  // 15: all four sides
+  fAnalysisManager->CreateH1("Detectors", "Detectors Hit", 16, -0.5, 15.5);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
