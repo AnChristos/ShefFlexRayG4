@@ -11,7 +11,7 @@ FlexRayEventAction::FlexRayEventAction(FlexRayRunAction *runAction)
 : G4UserEventAction(),
   fRunAction(runAction),
   fDetected(0),
-  fAnalysisManager(G4RootAnalysisManager::Instance())
+  fAnalysisManager(runAction->GetAnalysisManager())
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

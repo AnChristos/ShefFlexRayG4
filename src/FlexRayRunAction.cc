@@ -5,7 +5,7 @@
 FlexRayRunAction::FlexRayRunAction()
 : G4UserRunAction(),
   fNumDetected(0),
-  fAnalysisManager(G4RootAnalysisManager::Instance())
+  fAnalysisManager(G4Analysis::ManagerInstance("csv")) // also try "csv", "root", "xml", "hdf5"
 {
   fAnalysisManager->CreateNtuple("Photons", "Optical Photons Detected");
   fAnalysisManager->CreateNtupleIColumn("event");
@@ -35,7 +35,7 @@ FlexRayRunAction::~FlexRayRunAction()
 void FlexRayRunAction::BeginOfRunAction(const G4Run*)
 {
   fNumDetected = 0;
-  fAnalysisManager->OpenFile("FlexRay.root");
+  fAnalysisManager->OpenFile("FlexRay");
   // This method is called at the beginning of each run.
   // We can use it to initialize variables, arrays, etc.
 }

@@ -5,7 +5,6 @@
 #define FlexRayEventAction_h 
 
 #include "G4UserEventAction.hh"
-#include "G4RootAnalysisManager.hh"
 #include "G4Event.hh"
 #include "FlexRayRunAction.hh"
 #include "globals.hh"
@@ -26,7 +25,7 @@ public:
 private:
   FlexRayRunAction *fRunAction;
   G4int fDetected;
-  G4RootAnalysisManager *fAnalysisManager;
+  G4AnalysisManager *fAnalysisManager;
   G4int fEventID;
 };
 

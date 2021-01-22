@@ -5,7 +5,7 @@
 #define FlexRayRunAction_h 
 
 #include "G4UserRunAction.hh"
-#include "G4RootAnalysisManager.hh"
+#include "g4analysis.hh"
 #include "G4Run.hh"
 #include "globals.hh"
 
@@ -21,11 +21,13 @@ public:
   virtual void BeginOfRunAction(const G4Run* run) override;
   virtual void EndOfRunAction(const G4Run* run) override;
 
+  G4AnalysisManager *GetAnalysisManager() {return fAnalysisManager;};
+
   void LogDetected() {fNumDetected++;};
 
 private:
   G4int fNumDetected;
-  G4RootAnalysisManager *fAnalysisManager;
+  G4AnalysisManager *fAnalysisManager;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
