@@ -42,7 +42,7 @@ void FlexRayEventAction::EndOfEventAction(const G4Event*)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void FlexRayEventAction::LogDetection(int detectorIndex, G4double energy, G4double time)
+void FlexRayEventAction::LogDetection(int detectorIndex, G4double energy, G4double time, G4double x, G4double y)
 {
   // add some histograms or a TTree of energy and time
   fDetected |= (1 << (detectorIndex>>8));
@@ -50,5 +50,7 @@ void FlexRayEventAction::LogDetection(int detectorIndex, G4double energy, G4doub
   fAnalysisManager->FillNtupleIColumn(1, detectorIndex);
   fAnalysisManager->FillNtupleDColumn(2, energy/eV);
   fAnalysisManager->FillNtupleDColumn(3, time/ns);
+  fAnalysisManager->FillNtupleDColumn(4, x/mm);
+  fAnalysisManager->FillNtupleDColumn(5, y/mm);
   fAnalysisManager->AddNtupleRow();
 }

@@ -31,6 +31,7 @@ private:
   FlexRayEventAction* fEventAction;
   G4int fNumFibers;
   G4double fFiberSpacing;
+  G4double fLayerSpacing;
   G4double fFiberLength;
 };
 

@@ -12,6 +12,8 @@ FlexRayRunAction::FlexRayRunAction()
   fAnalysisManager->CreateNtupleIColumn("detector");
   fAnalysisManager->CreateNtupleDColumn("energy");
   fAnalysisManager->CreateNtupleDColumn("time");
+  fAnalysisManager->CreateNtupleDColumn("x");
+  fAnalysisManager->CreateNtupleDColumn("y");
   fAnalysisManager->FinishNtuple();
 
   // detectors lit up from a single x-ray:

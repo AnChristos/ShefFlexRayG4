@@ -106,7 +106,7 @@ FlexRayDetectorConstruction::Construct()
 
   /*G4int*/ fNumFibers = 4;
   /*G4double*/ fFiberSpacing = fiberRadius*2 + 0.2 * mm;
-  G4double layerSpacing = fiberRadius*2 + 1 * mm;
+  /*G4double*/ fLayerSpacing = fiberRadius*2 + 1 * mm;
 
   G4RotationMatrix *xrot = new G4RotationMatrix();
   xrot->rotateX(90*deg);
@@ -116,17 +116,17 @@ FlexRayDetectorConstruction::Construct()
   for(G4int i=0; i<fNumFibers; i++){
     G4double offset = (-fNumFibers * 0.5 + i + 0.5) * fFiberSpacing;
 
-    G4ThreeVector xpos(offset, 0, layerSpacing*0.5);
+    G4ThreeVector xpos(offset, 0, fLayerSpacing*0.5);
     new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, i,true);
 
-    G4ThreeVector ypos(0, offset, -layerSpacing*0.5);
+    G4ThreeVector ypos(0, offset, -fLayerSpacing*0.5);
     new G4PVPlacement(yrot, ypos, logicFiberClad2, "OuterCladdingY", logicWorld, false, i,true);
 
     if(i == fNumFibers/2){
-      G4cout << "Fiber Front: 0 " << offset/mm << " " << -layerSpacing*0.5/mm + fiberInnerRadius1*0.99 << " mm" << G4endl;
-      G4cout << "Fiber Center: 0 " << offset/mm << " " << -layerSpacing*0.5/mm << " mm" << G4endl;
-      G4cout << "Fiber Back: 0 " << offset/mm << " " << -layerSpacing*0.5/mm - fiberInnerRadius1*0.99 << " mm" << G4endl;
-      G4cout << "Fiber Edge: 0 " << offset/mm  + fiberInnerRadius1*0.99 << " " << -layerSpacing*0.5/mm << " mm" << G4endl;
+      G4cout << "Fiber Front: 0 " << offset/mm << " " << -fLayerSpacing*0.5/mm + fiberInnerRadius1*0.99 << " mm" << G4endl;
+      G4cout << "Fiber Center: 0 " << offset/mm << " " << -fLayerSpacing*0.5/mm << " mm" << G4endl;
+      G4cout << "Fiber Back: 0 " << offset/mm << " " << -fLayerSpacing*0.5/mm - fiberInnerRadius1*0.99 << " mm" << G4endl;
+      G4cout << "Fiber Edge: 0 " << offset/mm  + fiberInnerRadius1*0.99 << " " << -fLayerSpacing*0.5/mm << " mm" << G4endl;
     }
   }
 
