@@ -18,16 +18,7 @@ public:
   virtual ~FlexRayDetectorConstruction();
   virtual G4VPhysicalVolume* Construct() override;
 
-  G4double GetFiberLength() {return fFiberLength;};
-  G4double GetFiberSpacing() {return fFiberSpacing;};
-  G4double GetLayerSpacing() {return fLayerSpacing;};
-  G4double GetNumFibers() {return fNumFibers;};
-
 private:
-  G4double fFiberLength;
-  G4double fFiberSpacing;
-  G4double fLayerSpacing;
-  G4int fNumFibers;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

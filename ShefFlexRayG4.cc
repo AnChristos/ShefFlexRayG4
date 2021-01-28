@@ -62,7 +62,6 @@ main(int argc, char** argv)
   // Initialize G4 kernel
   //
   runManager->Initialize();
-  ((FlexRayTrackingAction*)trackingAction)->Initialize(detector);
 
   G4VisManager* visManager = new G4VisExecutive;
   visManager->Initialize();
