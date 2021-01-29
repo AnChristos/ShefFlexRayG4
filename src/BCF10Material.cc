@@ -3,7 +3,7 @@
 
 namespace {
 
-constexpr G4int NUMENTRIES = 11;
+/*constexpr G4int NUMENTRIES = 11;
 G4double core_photonEnergy[NUMENTRIES] = { 2.32 * eV, 2.45 * eV, 2.59 * eV,
                                            2.65 * eV, 2.70 * eV, 2.80 * eV,
                                            2.87 * eV, 2.91 * eV, 2.96 * eV,
@@ -12,10 +12,26 @@ G4double core_photonEnergy[NUMENTRIES] = { 2.32 * eV, 2.45 * eV, 2.59 * eV,
 G4double core_scintilationSpectra[NUMENTRIES] = { 0.00, 0.06, 0.19, 0.36,
                                                   0.52, 0.71, 1.00, 0.88,
                                                   0.69, 0.17, 0.00 };
+*/
 
-G4double core_pathLenght[NUMENTRIES] = { 2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m,
-                                         2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m,
-                                         2.2 * m, 2.2 * m, 2.2 * m };
+constexpr G4int NUMENTRIES = 26;
+G4double core_photonEnergy[NUMENTRIES] = { 2.32*eV, 2.35*eV, 2.38*eV, 2.41*eV, 2.44*eV, 2.47*eV, 
+						2.50*eV, 2.53*eV, 2.56*eV, 2.59*eV, 2.62*eV, 
+						2.65*eV, 2.68*eV, 2.71*eV, 2.74*eV, 2.77*eV, 
+						2.80*eV, 2.83*eV, 2.86*eV, 2.89*eV, 2.92*eV, 
+						2.95*eV, 2.98*eV, 3.01*eV, 3.04*eV, 3.07*eV};
+
+G4double core_scintilationSpectra[NUMENTRIES] = { 0.007, 0.021, 0.035, 0.048, 0.065, 0.093,
+						0.120, 0.148, 0.176, 0.233, 0.318,
+						0.408, 0.504, 0.568, 0.625, 0.682,
+						0.772, 0.896, 0.985, 0.895, 0.785,
+						0.638, 0.326, 0.127, 0.042, 0.000};
+
+G4double core_pathLenght[NUMENTRIES] = { 2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m,
+						2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m,
+						2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m,
+						2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m,
+						2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m, 2.2 * m};
 
 G4double rEnergies[2] = {2*eV, 3.5*eV};
 
