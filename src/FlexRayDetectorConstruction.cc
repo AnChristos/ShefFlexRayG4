@@ -9,6 +9,7 @@
 #include "G4NistManager.hh"
 #include "G4PVPlacement.hh"
 #include "G4Tubs.hh"
+#include "G4Torus.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4ios.hh"
@@ -84,9 +85,6 @@ FlexRayDetectorConstruction::Construct()
   G4Tubs* fiberClad1 = new G4Tubs("InnerCladding", 0, geo::fiberInnerRadius2, geo::fiberLength/2, 0 * deg, 360 * deg);
   G4Tubs* fiberCore = new G4Tubs("Core", 0, geo::fiberInnerRadius1, geo::fiberLength/2, 0 * deg, 360 * deg);
 
-  // an optical surface might be required at a later stage?
-  //G4OpticalSurface *opSurface = new G4OpticalSurface("OpSurface", glisur, ground, dielectric_dielectric, 0.999); //roughness=0.999?
-
   G4LogicalVolume *logicFiberClad2 = new G4LogicalVolume(fiberClad2, materials.clad2, "OuterCladding");
   G4LogicalVolume *logicFiberClad1 = new G4LogicalVolume(fiberClad1, materials.clad1, "InnerCladding");
   G4LogicalVolume *logicFiberCore = new G4LogicalVolume(fiberCore, materials.core, "Core");
@@ -95,7 +93,23 @@ FlexRayDetectorConstruction::Construct()
   /*G4VPhysicalVolume *PhysClad1 = */new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicFiberClad2, false, 0,true);
   /*G4VPhysicalVolume *PhysCore = */new G4PVPlacement(0, G4ThreeVector(), logicFiberCore, "Core", logicFiberClad1, false, 0,true);
 
+  G4LogicalVolume *logicFiberClad2Y = logicFiberClad2;
+
+  if(geo::bendTheta > 0.01 * deg){ // replace y-measuring fibers with bent fibers
+    G4Torus *fiberClad2Y = new G4Torus("OuterCladding", 0, geo::fiberRadius, geo::bendRadiusY, 90*deg - geo::bendTheta/2, geo::bendTheta);
+    G4Torus *fiberClad1Y = new G4Torus("InnerCladding", 0, geo::fiberInnerRadius2, geo::bendRadiusY, 90*deg - geo::bendTheta/2, geo::bendTheta);
+    G4Torus *fiberCoreY = new G4Torus("Core", 0, geo::fiberInnerRadius1, geo::bendRadiusY, 90*deg - geo::bendTheta/2, geo::bendTheta);
+
+    logicFiberClad2Y = new G4LogicalVolume(fiberClad2Y, materials.clad2, "OuterCladding");
+    G4LogicalVolume *logicFiberClad1Y = new G4LogicalVolume(fiberClad1Y, materials.clad1, "InnerCladding");
+    G4LogicalVolume *logicFiberCoreY = new G4LogicalVolume(fiberCoreY, materials.core, "Core");
+
+    /*G4VPhysicalVolume *PhysClad1 = */new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1Y, "InnerCladding", logicFiberClad2Y, false, 0,true);
+    /*G4VPhysicalVolume *PhysCore = */new G4PVPlacement(0, G4ThreeVector(), logicFiberCoreY, "Core", logicFiberClad1Y, false, 0,true);
+  }
+
   // an optical surface might be required at a later stage?
+  //G4OpticalSurface *opSurface = new G4OpticalSurface("OpSurface", glisur, ground, dielectric_dielectric, 0.999); //roughness=0.999?
   //new G4LogicalBorderSurface("SurfClad1Out", PhysCore, PhysClad1, opSurface);
   //new G4LogicalBorderSurface("SurfClad1In", PhysClad1, PhysCore, opSurface);
 
@@ -103,22 +117,32 @@ FlexRayDetectorConstruction::Construct()
   G4RotationMatrix *xrot = new G4RotationMatrix();
   xrot->rotateX(90*deg);
   G4RotationMatrix *yrot = new G4RotationMatrix();
-  yrot->rotateY(90*deg);
+  if(geo::bendTheta > 0.01 * deg){ //bent
+    yrot->rotateX(-90*deg);
+  }else{ //flat
+    yrot->rotateY(90*deg);
+  }
 
   for(G4int i=0; i<geo::numFibers; i++){
     G4double offset = (-geo::numFibers * 0.5 + i + 0.5) * geo::fiberSpacing;
 
     G4ThreeVector xpos(offset, 0, geo::layerSpacing*0.5);
-    new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, i,true);
-
     G4ThreeVector ypos(0, offset, -geo::layerSpacing*0.5);
-    new G4PVPlacement(yrot, ypos, logicFiberClad2, "OuterCladdingY", logicWorld, false, i,true);
 
-    if(i == geo::numFibers/2){
-      G4cout << "Fiber Front: 0 " << offset/mm << " " << -geo::layerSpacing*0.5/mm + geo::fiberInnerRadius1*0.99 << " mm" << G4endl;
-      G4cout << "Fiber Center: 0 " << offset/mm << " " << -geo::layerSpacing*0.5/mm << " mm" << G4endl;
-      G4cout << "Fiber Back: 0 " << offset/mm << " " << -geo::layerSpacing*0.5/mm - geo::fiberInnerRadius1*0.99 << " mm" << G4endl;
-      G4cout << "Fiber Edge: 0 " << offset/mm  + geo::fiberInnerRadius1*0.99 << " " << -geo::layerSpacing*0.5/mm << " mm" << G4endl;
+    if(geo::bendTheta > 0.01 * deg){
+      G4double circumferenceX = 360*deg/rad * geo::bendRadiusX;
+      xpos = G4ThreeVector(geo::bendRadiusX*sin(offset/circumferenceX * CLHEP::twopi), 0, geo::bendRadiusX*cos(offset/circumferenceX * CLHEP::twopi) - geo::bendRadius);
+      ypos = G4ThreeVector(0, offset, -geo::bendRadius);
+    }
+
+    G4cout << "ypos:  " << ypos.x() << "  " << ypos.y() << "  " << ypos.z() << G4endl;
+
+    new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, i,true);
+    new G4PVPlacement(yrot, ypos, logicFiberClad2Y, "OuterCladdingY", logicWorld, false, i,true);
+
+    if(i == (geo::numFibers-1)/2){
+      G4cout << "Fiber Center: 0 " << ypos.y()/mm << " " << -geo::layerSpacing*0.5/mm << " mm" << G4endl;
+      G4cout << "Fiber Edge: 0 " << ypos.y()/mm  + geo::fiberInnerRadius1*0.99 << " " << -geo::layerSpacing*0.5/mm << " mm" << G4endl;
     }
   }
 

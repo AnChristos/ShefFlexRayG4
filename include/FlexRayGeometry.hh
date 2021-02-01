@@ -10,9 +10,15 @@ namespace geo
   const G4double fiberRadius = 1 * mm;
   const G4double fiberInnerRadius2 = 0.99 * fiberRadius; // inner radius of second cladding
   const G4double fiberInnerRadius1 = 0.96 * fiberRadius; // inner radius of first cladding
+
   const G4int numFibers = 4;
   const G4double fiberSpacing = fiberRadius*2 + 0.2 * mm;
   const G4double layerSpacing = fiberRadius*2 + 1 * mm;
+
+  const G4double bendTheta = 0 * deg; // bend in the X direction, measured at the center plane.
+  const G4double bendRadius = fiberLength / (bendTheta / rad);
+  const G4double bendRadiusX = bendRadius + layerSpacing/2;
+  const G4double bendRadiusY = bendRadius - layerSpacing/2;
 }
 
 #endif
