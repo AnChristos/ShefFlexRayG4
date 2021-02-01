@@ -21,6 +21,7 @@ public:
   virtual void EndOfEventAction(const G4Event* event) override;
 
   void LogDetection(int detectorIndex, G4double energy, G4double time, G4double x, G4double y);
+  void LogXRay(G4double energy, G4double x, G4double y);
 
 private:
   FlexRayRunAction *fRunAction;

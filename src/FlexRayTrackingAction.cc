@@ -18,6 +18,17 @@ FlexRayTrackingAction::FlexRayTrackingAction(FlexRayEventAction* eventAction)
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void FlexRayTrackingAction::PostUserTrackingAction(const G4Track* track)
 {
+  G4int pdg = track->GetParticleDefinition()->GetPDGEncoding(); // 22=gamma, -22 = optical photon
+  if(pdg == 22) LogXRay(track);
+  if(pdg == -22) LogOpticalPhoton(track);
+
+  if(track->GetKineticEnergy() < 10 * eV) LogOpticalPhoton(track);
+  else LogXRay(track);
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void FlexRayTrackingAction::LogOpticalPhoton(const G4Track* track)
+{
   // get final position of track
   G4ThreeVector pos = track->GetPosition();
   
@@ -65,6 +76,22 @@ void FlexRayTrackingAction::PostUserTrackingAction(const G4Track* track)
   }
 
   fEventAction->LogDetection(detectorIndex, track->GetKineticEnergy(), track->GetGlobalTime(), internX, internY);
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void FlexRayTrackingAction::LogXRay(const G4Track* track)
+{
+  //check that it hit a fiber
+  G4String name = track->GetTouchable()->GetVolume()->GetName();
+  if(name != "Core" && name != "InnerCladding" && name != "OuterCladdingX" && name != "OuterCladdingY") return;
+
+  //check that it's the final x-ray (should this be done by looking at a list of daughters instead?)
+  G4double energy = track->GetKineticEnergy();
+  if(energy > 1*eV) return; //the final one will have 0 energy when it finishes scintillating
+
+  G4ThreeVector pos = track->GetPosition();
+
+  fEventAction->LogXRay(energy, pos.x(), pos.y()); // look for a way to get pre-scintillation energy
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

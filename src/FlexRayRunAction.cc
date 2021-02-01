@@ -8,13 +8,13 @@ FlexRayRunAction::FlexRayRunAction()
   fAnalysisManager(G4Analysis::ManagerInstance("csv")) // also try "csv", "root", "xml", "hdf5"
 {
   fAnalysisManager->CreateNtuple("Photons", "Optical Photons Detected");
-  fAnalysisManager->CreateNtupleIColumn("event");
-  fAnalysisManager->CreateNtupleIColumn("detector");
-  fAnalysisManager->CreateNtupleDColumn("energy");
-  fAnalysisManager->CreateNtupleDColumn("time");
-  fAnalysisManager->CreateNtupleDColumn("x");
-  fAnalysisManager->CreateNtupleDColumn("y");
-  fAnalysisManager->FinishNtuple();
+  fAnalysisManager->CreateNtupleIColumn(0, "event");
+  fAnalysisManager->CreateNtupleIColumn(0, "detector");
+  fAnalysisManager->CreateNtupleDColumn(0, "energy");
+  fAnalysisManager->CreateNtupleDColumn(0, "time");
+  fAnalysisManager->CreateNtupleDColumn(0, "x");
+  fAnalysisManager->CreateNtupleDColumn(0, "y");
+  fAnalysisManager->FinishNtuple(0);
 
   // detectors lit up from a single x-ray:
   // 0: none
@@ -23,6 +23,14 @@ FlexRayRunAction::FlexRayRunAction()
   // 12: both ends of a y-measurement
   // 15: all four sides
   fAnalysisManager->CreateH1("Detectors", "Detectors Hit", 16, -0.5, 15.5);
+
+  // MC truth
+  fAnalysisManager->CreateNtuple("Xrays", "X-Ray hits");
+  fAnalysisManager->CreateNtupleIColumn(1, "event");
+  fAnalysisManager->CreateNtupleDColumn(1, "energy");
+  fAnalysisManager->CreateNtupleDColumn(1, "x");
+  fAnalysisManager->CreateNtupleDColumn(1, "y");
+  fAnalysisManager->FinishNtuple(1);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

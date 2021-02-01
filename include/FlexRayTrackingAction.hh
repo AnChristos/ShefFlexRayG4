@@ -25,6 +25,9 @@ public:
   // method from the base class
   virtual void PostUserTrackingAction(const G4Track* track) override;
 
+  void LogOpticalPhoton(const G4Track *track);
+  void LogXRay(const G4Track *track);
+
 private:
   FlexRayEventAction* fEventAction;
 };

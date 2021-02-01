@@ -46,11 +46,20 @@ void FlexRayEventAction::LogDetection(int detectorIndex, G4double energy, G4doub
 {
   // add some histograms or a TTree of energy and time
   fDetected |= (1 << (detectorIndex>>8));
-  fAnalysisManager->FillNtupleIColumn(0, fEventID);
-  fAnalysisManager->FillNtupleIColumn(1, detectorIndex);
-  fAnalysisManager->FillNtupleDColumn(2, energy/eV);
-  fAnalysisManager->FillNtupleDColumn(3, time/ns);
-  fAnalysisManager->FillNtupleDColumn(4, x/mm);
-  fAnalysisManager->FillNtupleDColumn(5, y/mm);
-  fAnalysisManager->AddNtupleRow();
+  fAnalysisManager->FillNtupleIColumn(0, 0, fEventID);
+  fAnalysisManager->FillNtupleIColumn(0, 1, detectorIndex);
+  fAnalysisManager->FillNtupleDColumn(0, 2, energy/eV);
+  fAnalysisManager->FillNtupleDColumn(0, 3, time/ns);
+  fAnalysisManager->FillNtupleDColumn(0, 4, x/mm);
+  fAnalysisManager->FillNtupleDColumn(0, 5, y/mm);
+  fAnalysisManager->AddNtupleRow(0);
+}
+
+void FlexRayEventAction::LogXRay(G4double energy, G4double x, G4double y)
+{
+  fAnalysisManager->FillNtupleIColumn(1, 0, fEventID);
+  fAnalysisManager->FillNtupleDColumn(1, 1, energy/eV);
+  fAnalysisManager->FillNtupleDColumn(1, 2, x/mm);
+  fAnalysisManager->FillNtupleDColumn(1, 3, y/mm);
+  fAnalysisManager->AddNtupleRow(1);
 }
