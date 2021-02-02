@@ -27,7 +27,7 @@ FlexRayRunAction::FlexRayRunAction()
   // MC truth
   fAnalysisManager->CreateNtuple("Xrays", "X-Ray hits");
   fAnalysisManager->CreateNtupleIColumn(1, "event");
-  fAnalysisManager->CreateNtupleDColumn(1, "energy");
+  //fAnalysisManager->CreateNtupleDColumn(1, "energy");
   fAnalysisManager->CreateNtupleDColumn(1, "x");
   fAnalysisManager->CreateNtupleDColumn(1, "y");
   fAnalysisManager->FinishNtuple(1);

@@ -85,13 +85,14 @@ void FlexRayTrackingAction::LogXRay(const G4Track* track)
   G4String name = track->GetTouchable()->GetVolume()->GetName();
   if(name != "Core" && name != "InnerCladding" && name != "OuterCladdingX" && name != "OuterCladdingY") return;
 
-  //check that it's the final x-ray (should this be done by looking at a list of daughters instead?)
-  G4double energy = track->GetKineticEnergy();
-  if(energy > 1*eV) return; //the final one will have 0 energy when it finishes scintillating
-
   G4ThreeVector pos = track->GetPosition();
+  G4double x = pos.x();
 
-  fEventAction->LogXRay(energy, pos.x(), pos.y()); // look for a way to get pre-scintillation energy
+  if(geo::bendTheta > 0.01 * deg){
+    x = atan2(x, pos.z()+geo::bendRadius) * geo::bendRadius;
+  }
+
+  fEventAction->LogXRay(pos.x(), pos.y());
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
