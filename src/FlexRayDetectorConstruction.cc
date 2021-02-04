@@ -90,8 +90,13 @@ FlexRayDetectorConstruction::Construct()
   G4LogicalVolume *logicFiberCore = new G4LogicalVolume(fiberCore, materials.core, "Core");
 
   // construct full fiber (place IC and core inside OC)
-  /*G4VPhysicalVolume *PhysClad1 = */new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicFiberClad2, false, 0,true);
-  /*G4VPhysicalVolume *PhysCore = */new G4PVPlacement(0, G4ThreeVector(), logicFiberCore, "Core", logicFiberClad1, false, 0,true);
+  G4VPhysicalVolume *PhysClad1 = new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicFiberClad2, false, 0,true);
+  G4VPhysicalVolume *PhysCore = new G4PVPlacement(0, G4ThreeVector(), logicFiberCore, "Core", logicFiberClad1, false, 0,true);
+
+  // a rough optical surface helps to match the trapping efficiency in the catalog.  Might need to discuss with SGC.
+  G4OpticalSurface *opSurface = new G4OpticalSurface("OpSurface", glisur, ground, dielectric_dielectric, 0.93);
+  new G4LogicalBorderSurface("SurfClad1Out", PhysCore, PhysClad1, opSurface);
+  new G4LogicalBorderSurface("SurfClad1In", PhysClad1, PhysCore, opSurface);
 
   G4LogicalVolume *logicFiberClad2Y = logicFiberClad2;
 
@@ -104,15 +109,12 @@ FlexRayDetectorConstruction::Construct()
     G4LogicalVolume *logicFiberClad1Y = new G4LogicalVolume(fiberClad1Y, materials.clad1, "InnerCladding");
     G4LogicalVolume *logicFiberCoreY = new G4LogicalVolume(fiberCoreY, materials.core, "Core");
 
-    /*G4VPhysicalVolume *PhysClad1 = */new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1Y, "InnerCladding", logicFiberClad2Y, false, 0,true);
-    /*G4VPhysicalVolume *PhysCore = */new G4PVPlacement(0, G4ThreeVector(), logicFiberCoreY, "Core", logicFiberClad1Y, false, 0,true);
+    G4VPhysicalVolume *PhysClad1Y = new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1Y, "InnerCladding", logicFiberClad2Y, false, 0,true);
+    G4VPhysicalVolume *PhysCoreY = new G4PVPlacement(0, G4ThreeVector(), logicFiberCoreY, "Core", logicFiberClad1Y, false, 0,true);
+
+    new G4LogicalBorderSurface("SurfClad1OutY", PhysCoreY, PhysClad1Y, opSurface);
+    new G4LogicalBorderSurface("SurfClad1InY", PhysClad1Y, PhysCoreY, opSurface);
   }
-
-  // an optical surface might be required at a later stage?
-  //G4OpticalSurface *opSurface = new G4OpticalSurface("OpSurface", glisur, ground, dielectric_dielectric, 0.999); //roughness=0.999?
-  //new G4LogicalBorderSurface("SurfClad1Out", PhysCore, PhysClad1, opSurface);
-  //new G4LogicalBorderSurface("SurfClad1In", PhysClad1, PhysCore, opSurface);
-
 
   G4RotationMatrix *xrot = new G4RotationMatrix();
   xrot->rotateX(90*deg);
