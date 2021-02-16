@@ -94,7 +94,7 @@ FlexRayDetectorConstruction::Construct()
   G4VPhysicalVolume *PhysCore = new G4PVPlacement(0, G4ThreeVector(), logicFiberCore, "Core", logicFiberClad1, false, 0,true);
 
   // a rough optical surface helps to match the trapping efficiency in the catalog.  Might need to discuss with SGC.
-  G4OpticalSurface *opSurface = new G4OpticalSurface("OpSurface", glisur, ground, dielectric_dielectric, 0.93);
+  G4OpticalSurface *opSurface = new G4OpticalSurface("OpSurface", glisur, ground, dielectric_dielectric, geo::fiberRoughness);
   new G4LogicalBorderSurface("SurfClad1Out", PhysCore, PhysClad1, opSurface);
   new G4LogicalBorderSurface("SurfClad1In", PhysClad1, PhysCore, opSurface);
 
