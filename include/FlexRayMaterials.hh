@@ -19,6 +19,7 @@ public:
 
   // scintillating materials
   G4Material *BCF10;
+  G4Material *BC505;
 
 private:
   std::vector<G4double> CurveToHistX(std::vector<G4double> curveX);
