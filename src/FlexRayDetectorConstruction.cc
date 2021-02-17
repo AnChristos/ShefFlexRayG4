@@ -1,6 +1,6 @@
 #include "FlexRayGeometry.hh"
 #include "FlexRayDetectorConstruction.hh"
-#include "BCF10Material.hh"
+#include "FlexRayMaterials.hh"
 #include "G4Box.hh"
 #include "G4Colour.hh"
 #include "G4GeometryManager.hh"
@@ -41,17 +41,18 @@ FlexRayDetectorConstruction::Construct()
   //sNistMan->SetVerbose(2);
 
   G4Material* Air = sNistMan->FindOrBuildMaterial("G4_AIR");
-  BCF10::Materials materials = BCF10::createMaterials();
+
+  FlexRayMaterials materials;
 
   // print fr materials (for debug purposes mainly)
   G4cout << G4endl << "The materials defined are : " << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;
   G4cout << "Material properties table for BCF10 core : " << G4endl;
-  materials.core->GetMaterialPropertiesTable()->DumpTable();
+  materials.BCF10->GetMaterialPropertiesTable()->DumpTable();
   G4cout << "Material properties table for BCF10 clad1 : " << G4endl;
-  materials.clad1->GetMaterialPropertiesTable()->DumpTable();
+  materials.PMMA149->GetMaterialPropertiesTable()->DumpTable();
   G4cout << "Material properties table for BCF10 clad2 : " << G4endl;
-  materials.clad2->GetMaterialPropertiesTable()->DumpTable();
+  materials.PMMA142->GetMaterialPropertiesTable()->DumpTable();
 
   /*
    * Construct the enclosing world
@@ -85,9 +86,9 @@ FlexRayDetectorConstruction::Construct()
   G4Tubs* fiberClad1 = new G4Tubs("InnerCladding", 0, geo::fiberInnerRadius2, geo::fiberLength/2, 0 * deg, 360 * deg);
   G4Tubs* fiberCore = new G4Tubs("Core", 0, geo::fiberInnerRadius1, geo::fiberLength/2, 0 * deg, 360 * deg);
 
-  G4LogicalVolume *logicFiberClad2 = new G4LogicalVolume(fiberClad2, materials.clad2, "OuterCladding");
-  G4LogicalVolume *logicFiberClad1 = new G4LogicalVolume(fiberClad1, materials.clad1, "InnerCladding");
-  G4LogicalVolume *logicFiberCore = new G4LogicalVolume(fiberCore, materials.core, "Core");
+  G4LogicalVolume *logicFiberClad2 = new G4LogicalVolume(fiberClad2, materials.PMMA142, "OuterCladding");
+  G4LogicalVolume *logicFiberClad1 = new G4LogicalVolume(fiberClad1, materials.PMMA149, "InnerCladding");
+  G4LogicalVolume *logicFiberCore = new G4LogicalVolume(fiberCore, materials.BCF10, "Core");
 
   // construct full fiber (place IC and core inside OC)
   G4VPhysicalVolume *PhysClad1 = new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicFiberClad2, false, 0,true);
@@ -105,9 +106,9 @@ FlexRayDetectorConstruction::Construct()
     G4Torus *fiberClad1Y = new G4Torus("InnerCladding", 0, geo::fiberInnerRadius2, geo::bendRadiusY, 90*deg - geo::bendTheta/2, geo::bendTheta);
     G4Torus *fiberCoreY = new G4Torus("Core", 0, geo::fiberInnerRadius1, geo::bendRadiusY, 90*deg - geo::bendTheta/2, geo::bendTheta);
 
-    logicFiberClad2Y = new G4LogicalVolume(fiberClad2Y, materials.clad2, "OuterCladding");
-    G4LogicalVolume *logicFiberClad1Y = new G4LogicalVolume(fiberClad1Y, materials.clad1, "InnerCladding");
-    G4LogicalVolume *logicFiberCoreY = new G4LogicalVolume(fiberCoreY, materials.core, "Core");
+    logicFiberClad2Y = new G4LogicalVolume(fiberClad2Y, materials.PMMA142, "OuterCladding");
+    G4LogicalVolume *logicFiberClad1Y = new G4LogicalVolume(fiberClad1Y, materials.PMMA149, "InnerCladding");
+    G4LogicalVolume *logicFiberCoreY = new G4LogicalVolume(fiberCoreY, materials.BCF10, "Core");
 
     G4VPhysicalVolume *PhysClad1Y = new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1Y, "InnerCladding", logicFiberClad2Y, false, 0,true);
     G4VPhysicalVolume *PhysCoreY = new G4PVPlacement(0, G4ThreeVector(), logicFiberCoreY, "Core", logicFiberClad1Y, false, 0,true);
