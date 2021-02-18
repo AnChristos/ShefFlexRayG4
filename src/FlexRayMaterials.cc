@@ -60,7 +60,7 @@ FlexRayMaterials::FlexRayMaterials(){
 					0.78, 0.82, 0.95, 0.98, 0.96,
 					0.80, 0.53, 0};
 
-  BCF10 = sNistMan->ConstructNewMaterial("BC505", BC505Elements, BC505Atoms, BC505Density);
+  BC505 = sNistMan->ConstructNewMaterial("BC505", BC505Elements, BC505Atoms, BC505Density);
   G4MaterialPropertiesTable* MPT_BC505 = new G4MaterialPropertiesTable();
   FillConstProperty(MPT_BC505, "RINDEX", 1.505);
   FillConstProperty(MPT_BC505, "ABSLENGTH", 2.2*m); // this isn't specified in the datasheet, so I picked a number that's big enough not to matter much
