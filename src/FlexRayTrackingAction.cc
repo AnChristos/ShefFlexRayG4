@@ -21,9 +21,6 @@ void FlexRayTrackingAction::PostUserTrackingAction(const G4Track* track)
   G4int pdg = track->GetParticleDefinition()->GetPDGEncoding(); // 22=gamma, -22 = optical photon
   if(pdg == 22) LogXRay(track);
   if(pdg == -22) LogOpticalPhoton(track);
-
-  if(track->GetKineticEnergy() < 10 * eV) LogOpticalPhoton(track);
-  else LogXRay(track);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -75,6 +72,7 @@ void FlexRayTrackingAction::LogOpticalPhoton(const G4Track* track)
     if(pos.x() > 0) detectorIndex |= (1<<8);
   }
 
+  //G4cout << "LogOptical  " << detectorIndex << '\t' << track->GetKineticEnergy() << '\t' << track->GetGlobalTime() << G4endl;
   fEventAction->LogDetection(detectorIndex, track->GetKineticEnergy(), track->GetGlobalTime(), internX, internY);
 }
 
