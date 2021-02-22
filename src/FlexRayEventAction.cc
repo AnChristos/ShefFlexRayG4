@@ -1,5 +1,7 @@
 #include "FlexRayEventAction.hh"
 
+#include "G4EventManager.hh"
+
 #include "G4Event.hh"
 #include "G4SystemOfUnits.hh"
 
@@ -38,6 +40,7 @@ void FlexRayEventAction::EndOfEventAction(const G4Event*)
   // to the output file.
 
   if(fDetected > 0) fRunAction->LogDetected();
+  if(fDetected > 4 && (fDetected != 8 && fDetected != 12)) fpEventManager->KeepTheCurrentEvent();
   fAnalysisManager->FillH1(0, fDetected);
 }
 
