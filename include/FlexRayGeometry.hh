@@ -6,6 +6,8 @@
 
 namespace geo
 {
+
+  const G4bool squareFibers = true;
   const G4double fiberLength = 0.2 * m;
   const G4double fiberRadius = 1 * mm;
   const G4double fiberInnerRadius2 = 0.99 * fiberRadius; // inner radius of second cladding
@@ -19,7 +21,7 @@ namespace geo
 
   // ----------------
   //Either give a theta and calculate the radius or give a radius and calculate the theta.
-  const G4double bendTheta = 0 * deg; // bend in the X direction, measured at the center plane between the two layers
+  const G4double bendTheta = 30 * deg; // bend in the X direction, measured at the center plane between the two layers
   const G4double bendRadius = fiberLength / (bendTheta / rad); // radius calculated from a given theta
 
   //const G4double bendRadius = 0.15 * m; // radius measured at the center plane between the two layers

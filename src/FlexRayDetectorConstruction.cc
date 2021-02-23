@@ -81,10 +81,17 @@ FlexRayDetectorConstruction::Construct()
   /*
    * Construct the scintillating fiber geometry
    */
-  
-  G4Tubs* fiberClad2 = new G4Tubs("OuterCladding", 0, geo::fiberRadius, geo::fiberLength/2, 0 * deg, 360 * deg);
-  G4Tubs* fiberClad1 = new G4Tubs("InnerCladding", 0, geo::fiberInnerRadius2, geo::fiberLength/2, 0 * deg, 360 * deg);
-  G4Tubs* fiberCore = new G4Tubs("Core", 0, geo::fiberInnerRadius1, geo::fiberLength/2, 0 * deg, 360 * deg);
+  G4VSolid *fiberCore, *fiberClad1, *fiberClad2;
+
+  if(geo::squareFibers){
+    fiberClad2 = new G4Box("OuterCladding", geo::fiberRadius, geo::fiberRadius, geo::fiberLength/2);
+    fiberClad1 = new G4Box("InnerCladding", geo::fiberInnerRadius2, geo::fiberInnerRadius2, geo::fiberLength/2);
+    fiberCore = new G4Box("Core", geo::fiberInnerRadius1, geo::fiberInnerRadius1, geo::fiberLength/2);
+  }else{
+    fiberClad2 = new G4Tubs("OuterCladding", 0, geo::fiberRadius, geo::fiberLength/2, 0 * deg, 360 * deg);
+    fiberClad1 = new G4Tubs("InnerCladding", 0, geo::fiberInnerRadius2, geo::fiberLength/2, 0 * deg, 360 * deg);
+    fiberCore = new G4Tubs("Core", 0, geo::fiberInnerRadius1, geo::fiberLength/2, 0 * deg, 360 * deg);
+  }
 
   G4LogicalVolume *logicFiberClad2 = new G4LogicalVolume(fiberClad2, materials.PMMA142, "OuterCladding");
   G4LogicalVolume *logicFiberClad1 = new G4LogicalVolume(fiberClad1, materials.PMMA149, "InnerCladding");
@@ -102,9 +109,17 @@ FlexRayDetectorConstruction::Construct()
   G4LogicalVolume *logicFiberClad2Y = logicFiberClad2;
 
   if(geo::bendTheta > 0.01 * deg){ // replace y-measuring fibers with bent fibers
-    G4Torus *fiberClad2Y = new G4Torus("OuterCladding", 0, geo::fiberRadius, geo::bendRadiusY, 90*deg - geo::bendTheta/2, geo::bendTheta);
-    G4Torus *fiberClad1Y = new G4Torus("InnerCladding", 0, geo::fiberInnerRadius2, geo::bendRadiusY, 90*deg - geo::bendTheta/2, geo::bendTheta);
-    G4Torus *fiberCoreY = new G4Torus("Core", 0, geo::fiberInnerRadius1, geo::bendRadiusY, 90*deg - geo::bendTheta/2, geo::bendTheta);
+    G4VSolid *fiberClad2Y, *fiberClad1Y, *fiberCoreY;
+
+    if(geo::squareFibers){
+      fiberClad2Y = new G4Tubs("OuterCladding", geo::bendRadiusY - geo::fiberRadius, geo::bendRadiusY + geo::fiberRadius, geo::fiberRadius, 90*deg - geo::bendTheta/2, geo::bendTheta);
+      fiberClad1Y = new G4Tubs("InnerCladding", geo::bendRadiusY - geo::fiberInnerRadius2, geo::bendRadiusY + geo::fiberInnerRadius2, geo::fiberInnerRadius2, 90*deg - geo::bendTheta/2, geo::bendTheta);
+      fiberCoreY = new G4Tubs("Core", geo::bendRadiusY - geo::fiberInnerRadius1, geo::bendRadiusY + geo::fiberInnerRadius1, geo::fiberInnerRadius1, 90*deg - geo::bendTheta/2, geo::bendTheta);
+    }else{
+      fiberClad2Y = new G4Torus("OuterCladding", 0, geo::fiberRadius, geo::bendRadiusY, 90*deg - geo::bendTheta/2, geo::bendTheta);
+      fiberClad1Y = new G4Torus("InnerCladding", 0, geo::fiberInnerRadius2, geo::bendRadiusY, 90*deg - geo::bendTheta/2, geo::bendTheta);
+      fiberCoreY = new G4Torus("Core", 0, geo::fiberInnerRadius1, geo::bendRadiusY, 90*deg - geo::bendTheta/2, geo::bendTheta);
+    }
 
     logicFiberClad2Y = new G4LogicalVolume(fiberClad2Y, materials.PMMA142, "OuterCladding");
     G4LogicalVolume *logicFiberClad1Y = new G4LogicalVolume(fiberClad1Y, materials.PMMA149, "InnerCladding");
