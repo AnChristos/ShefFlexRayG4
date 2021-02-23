@@ -64,8 +64,10 @@ void FlexRayTrackingAction::LogOpticalPhoton(const G4Track* track)
     internY = pos.z() - vol->GetTranslation().z();
 
     if(geo::bendTheta > 0.01 * deg){
-      if(pos.x() > 0) internY = (pos.z()+geo::bendRadius)*cos(geo::bendTheta/2) + pos.x()*sin(geo::bendTheta/2) - geo::bendRadiusY;
-      if(pos.x() < 0) internY = (pos.z()+geo::bendRadius)*cos(geo::bendTheta/2) - pos.x()*sin(geo::bendTheta/2) - geo::bendRadiusY;
+      if(pos.x() > 0) internY = (pos.z()+geo::bendRadius)*cos(geo::bendTheta/2) + pos.x()*sin(geo::bendTheta/2) - geo::layerRadius(0);
+      if(pos.x() < 0) internY = (pos.z()+geo::bendRadius)*cos(geo::bendTheta/2) - pos.x()*sin(geo::bendTheta/2) - geo::layerRadius(0);
+      //correct interY if it's in a different layer
+      while(internY > geo::layerSpacing) internY -= geo::layerSpacing*2;
     }
 
     detectorIndex |= (1<<9);
