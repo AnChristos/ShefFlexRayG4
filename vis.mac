@@ -61,8 +61,8 @@
 #/vis/modeling/trajectories/create/drawByCharge
 
 /vis/modeling/trajectories/create/drawByParticleID
-/vis/modeling/trajectories/drawByParticleID-0/default/setDrawStepPts true
-/vis/modeling/trajectories/drawByParticleID-0/default/setStepPtsSize 2
+#/vis/modeling/trajectories/drawByParticleID-0/default/setDrawStepPts true
+#/vis/modeling/trajectories/drawByParticleID-0/default/setStepPtsSize 2
 /vis/modeling/trajectories/drawByParticleID-0/set gamma blue
 /vis/modeling/trajectories/drawByParticleID-0/set opticalphoton green
 /vis/modeling/trajectories/drawByParticleID-0/set e- red
@@ -70,7 +70,7 @@
 # (if too many tracks cause core dump => /tracking/storeTrajectory 0)
 #
 # Draw hits at end of event:
-/vis/scene/add/hits
+#/vis/scene/add/hits
 #
 # To draw only gammas:
 #/vis/filtering/trajectories/create/particleFilter
@@ -82,7 +82,7 @@
 #
 #
 # To superimpose all of the events from a given run:
-/vis/scene/endOfEventAction accumulate
+/vis/scene/endOfEventAction accumulate 0
 #
 # Re-establish auto refreshing and verbosity:
 /vis/viewer/set/autoRefresh true
@@ -94,17 +94,3 @@
 /run/initialize
 /vis/viewer/set/targetPoint 0 0 0 m
 
-#Optical photon gun
-/gps/particle opticalphoton
-/gps/polarization 0 1 0
-/gps/ene/type Mono
-/gps/ene/mono 2.87 eV
-#With current geometry:
-#Fiber Edge: 0 2.09 -1.5 mm
-#Fiber Center: 0 1.1 -1.5 mm
-/gps/position 0 1.0 -1.5 mm
-/gps/ang/type iso
-/gps/ang/mintheta 0.0 deg
-/gps/ang/maxtheta 180.0 deg
-
-#
