@@ -157,7 +157,7 @@ FlexRayDetectorConstruction::Construct()
         xrot->rotateZ( offset / geo::bendRadius );
       }
 
-      new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, i,true);
+      if(geo::numLayers > iLayer+1) new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, i,true); // need the if there in case we're building an odd number of layers
       new G4PVPlacement(yrot, ypos, logicFiberClad2Y, "OuterCladdingY", logicWorld, false, i,true);
 
       if(i == (geo::numFibers-1)/2){
