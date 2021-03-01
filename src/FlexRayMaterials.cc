@@ -49,6 +49,44 @@ FlexRayMaterials::FlexRayMaterials(){
   MPT_BCF10->AddConstProperty("FASTTIMECONSTANT", 2.7 * ns);
   BCF10->SetMaterialPropertiesTable(MPT_BCF10);
 
+  //SGC BCF-12: improved transmission for long fibers
+  std::vector<G4double> BCF12_energy = {2.15*eV, 2.33*eV, 2.44*eV, 2.56*eV, 2.58*eV,
+					2.62*eV, 2.69*eV, 2.84*eV, 2.90*eV, 2.95*eV,
+					3.10*eV, 3.20*eV};
+  std::vector<G4double> BCF12_yield = { 0.00, 0.08, 0.21, 0.35, 0.42,
+					0.47, 0.71, 1.00, 0.94, 0.80,
+					0.10, 0.00};
+
+  BCF12 = sNistMan->ConstructNewMaterial("BCF12", PolystyreneElements, PolystyreneAtoms, PolystyreneDensity);
+  G4MaterialPropertiesTable* MPT_BCF12 = new G4MaterialPropertiesTable();
+  FillConstProperty(MPT_BCF12, "RINDEX", 1.6);
+  FillConstProperty(MPT_BCF12, "ABSLENGTH", 2.7*m);
+  FillPropertyFromCurve(MPT_BCF12, "FASTCOMPONENT", BCF12_energy, BCF12_yield, 25);
+  BCF12->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
+  MPT_BCF12->AddConstProperty("SCINTILLATIONYIELD", 8000/MeV);
+  MPT_BCF12->AddConstProperty("RESOLUTIONSCALE", 1.0); // I think this isn't a property of the material, just of the simulation
+  MPT_BCF12->AddConstProperty("FASTTIMECONSTANT", 3.2 * ns);
+  BCF12->SetMaterialPropertiesTable(MPT_BCF12);
+
+  //SGC BCF-60: increased radiation hardness
+  std::vector<G4double> BCF60_energy = {1.91*eV, 2.04*eV, 2.06*eV, 2.10*eV, 2.17*eV,
+					2.23*eV, 2.26*eV, 2.33*eV, 2.37*eV, 2.42*eV,
+					2.48*eV, 2.52*eV, 2.58*eV};
+  std::vector<G4double> BCF60_yield = { 0.00, 0.11, 0.18, 0.20, 0.42,
+					0.65, 0.82, 1.00, 0.88, 0.38,
+					0.08, 0.03, 0.00};
+
+  BCF60 = sNistMan->ConstructNewMaterial("BCF60", PolystyreneElements, PolystyreneAtoms, PolystyreneDensity);
+  G4MaterialPropertiesTable* MPT_BCF60 = new G4MaterialPropertiesTable();
+  FillConstProperty(MPT_BCF60, "RINDEX", 1.6);
+  FillConstProperty(MPT_BCF60, "ABSLENGTH", 3.5*m);
+  FillPropertyFromCurve(MPT_BCF60, "FASTCOMPONENT", BCF60_energy, BCF60_yield, 25);
+  BCF60->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
+  MPT_BCF60->AddConstProperty("SCINTILLATIONYIELD", 7100/MeV);
+  MPT_BCF60->AddConstProperty("RESOLUTIONSCALE", 1.0); // I think this isn't a property of the material, just of the simulation
+  MPT_BCF60->AddConstProperty("FASTTIMECONSTANT", 7 * ns);
+  BCF60->SetMaterialPropertiesTable(MPT_BCF60);
+
   //SGC BC-505: high-performance liquid scintillator
   std::vector<G4String> BC505Elements = {"C", "H"};
   std::vector<G4double> BC505Atoms = {1, 1.331};

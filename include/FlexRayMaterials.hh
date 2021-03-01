@@ -19,7 +19,9 @@ public:
 
   // scintillating materials
   G4Material *BCF10;
-  G4Material *BC505;
+  G4Material *BCF12; // improved transmission for long fibers
+  G4Material *BCF60; // improved radiation hardness
+  G4Material *BC505; // high-light-yield liquid scintillator
 
 private:
   std::vector<G4double> CurveToHistX(std::vector<G4double> curveX);
