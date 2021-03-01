@@ -91,6 +91,9 @@
 # For file-based drivers, use this to create an empty detector view:
 #/vis/viewer/flush
 #
+
+/vis/ogl/set/displayListLimit 1000000
+
 /run/initialize
 /vis/viewer/set/targetPoint 0 0 0 m
 
