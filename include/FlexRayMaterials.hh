@@ -16,6 +16,7 @@ public:
   // cladding materials
   G4Material *PMMA149;
   G4Material *PMMA142;
+  G4Material *SiGlass;
 
   // scintillating materials
   G4Material *BCF10;

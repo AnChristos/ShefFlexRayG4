@@ -13,6 +13,7 @@ FlexRayMaterials::FlexRayMaterials(){
   std::vector<G4int> PMMAnatoms = { 5, 8, 2 };
   G4double PMMAdensity = 1.190 * g / cm3;
 
+  // Acrylic
   PMMA149 = sNistMan->ConstructNewMaterial("PMMAClad149", PMMAelements, PMMAnatoms, PMMAdensity);
   G4MaterialPropertiesTable* MPT_PMMA149 = new G4MaterialPropertiesTable();
   FillConstProperty(MPT_PMMA149, "RINDEX", 1.49);
@@ -24,6 +25,16 @@ FlexRayMaterials::FlexRayMaterials(){
   FillConstProperty(MPT_PMMA142, "RINDEX", 1.42);
   FillConstProperty(MPT_PMMA142, "ABSLENGTH", 5.40 * m);
   PMMA142->SetMaterialPropertiesTable(MPT_PMMA142);
+
+  // Glass
+  std::vector<G4String> SiGlassElements = { "Si", "O" };
+  std::vector<G4int> SiGlassAtoms = { 1, 2 };
+  G4double SiGlassDensity = 2.203 * g / cm3;
+  SiGlass = sNistMan->ConstructNewMaterial("SiGlass", SiGlassElements, SiGlassAtoms, SiGlassDensity);
+  G4MaterialPropertiesTable* MPT_SiGlass = new G4MaterialPropertiesTable();
+  FillConstProperty(MPT_SiGlass, "RINDEX", 1.47);
+  FillConstProperty(MPT_SiGlass, "ABSLENGTH", 10 * m); // this is probably an underestimate, but it's long enough not to matter.
+  SiGlass->SetMaterialPropertiesTable(MPT_SiGlass);
 
   // Scintillating Materials
 
