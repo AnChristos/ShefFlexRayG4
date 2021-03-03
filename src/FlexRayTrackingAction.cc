@@ -19,7 +19,7 @@ FlexRayTrackingAction::FlexRayTrackingAction(FlexRayEventAction* eventAction)
 void FlexRayTrackingAction::PostUserTrackingAction(const G4Track* track)
 {
   G4int pdg = track->GetParticleDefinition()->GetPDGEncoding(); // 22=gamma, -22 = optical photon
-  if(pdg == 22) LogXRay(track);
+  //if(pdg == 22) LogXRay(track);
   if(pdg == -22) LogOpticalPhoton(track);
 }
 
