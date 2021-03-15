@@ -109,6 +109,7 @@ FlexRayDetectorConstruction::Construct()
   G4LogicalVolume *logicFiberClad2Y = logicFiberClad2; // this will be replaced if the detector is bent.
 
   for(int iLayer=0; iLayer<geo::numLayers; iLayer+=2){
+    // first add y-measuring fibers
     if(geo::bendTheta > 0.01 * deg){ // replace y-measuring fibers with bent fibers
       G4VSolid *fiberClad2Y, *fiberClad1Y, *fiberCoreY;
 
@@ -133,9 +134,6 @@ FlexRayDetectorConstruction::Construct()
       new G4LogicalBorderSurface("SurfClad1InY", PhysClad1Y, PhysCoreY, opSurface);
     }
 
-    G4RotationMatrix *xrot = new G4RotationMatrix();
-    xrot->rotateX(-90*deg);
-    
     G4RotationMatrix *yrot = new G4RotationMatrix();
     if(geo::bendTheta > 0.01 * deg){ //bent
       yrot->rotateX(-90*deg);
@@ -147,25 +145,44 @@ FlexRayDetectorConstruction::Construct()
       G4double offset = (-geo::numFibers * 0.5 + i + 0.5) * geo::fiberSpacing;
 
       G4ThreeVector ypos(0, offset, geo::layerPosition(iLayer));
+
+      if(geo::bendTheta > 0.01 * deg){
+        ypos = G4ThreeVector(0, offset, -geo::bendRadius);
+      }
+
+      new G4PVPlacement(yrot, ypos, logicFiberClad2Y, "OuterCladdingY", logicWorld, false, iLayer*geo::numFibers + i, true);
+    }
+
+    if(geo::numLayers == iLayer+1){ // odd number of layers, skip x fibers
+      break;
+    }
+
+    // then add x-measuring fibers
+    G4RotationMatrix *xrot = new G4RotationMatrix();
+    xrot->rotateX(-90*deg);
+    
+    for(G4int i=0; i<geo::numFibers; i++){
+      G4double offset = (-geo::numFibers * 0.5 + i + 0.5) * geo::fiberSpacing;
+
       G4ThreeVector xpos(offset, 0, geo::layerPosition(iLayer + 1));
 
       if(geo::bendTheta > 0.01 * deg){
 	xpos = G4ThreeVector(geo::layerRadius(iLayer+1)*sin(offset/geo::bendRadius), 0, geo::layerRadius(iLayer+1)*cos(offset/geo::bendRadius) - geo::bendRadius);
-        ypos = G4ThreeVector(0, offset, -geo::bendRadius);
         xrot = new G4RotationMatrix();
         xrot->rotateX( -90*deg );
         xrot->rotateZ( offset / geo::bendRadius );
       }
 
-      if(geo::numLayers > iLayer+1) new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, iLayer*geo::numFibers + i, true); // need the if there in case we're building an odd number of layers
-      new G4PVPlacement(yrot, ypos, logicFiberClad2Y, "OuterCladdingY", logicWorld, false, iLayer*geo::numFibers + i, true);
-
-      if(i == (geo::numFibers-1)/2){
-        G4cout << "Fiber Center: 0 " << ypos.y()/mm << " " << -geo::layerSpacing*0.5/mm << " mm" << G4endl;
-        G4cout << "Fiber Edge: 0 " << ypos.y()/mm  + geo::fiberInnerRadius1*0.99 << " " << -geo::layerSpacing*0.5/mm << " mm" << G4endl;
-      }
+      new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, iLayer*geo::numFibers + i, true); // need the if there in case we're building an odd number of layers
     }
   }
+
+  // print out fiber location for testing
+  G4double offset = (geo::numFibers % 2) == 0 ? geo::fiberSpacing/2 : 0;
+
+  G4cout << "Fiber Center: " << offset/mm << " " << offset/mm << " " << -geo::layerSpacing*0.5/mm << " mm" << G4endl;
+  G4cout << "Fiber Edge: " << offset/mm << " " << offset/mm + geo::fiberInnerRadius1*0.99 << " " << -geo::layerSpacing*0.5/mm << " mm" << G4endl;
+
   // Return world
   return physiWorld;
 }
