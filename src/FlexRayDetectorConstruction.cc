@@ -93,9 +93,9 @@ FlexRayDetectorConstruction::Construct()
     fiberCore = new G4Tubs("Core", 0, geo::fiberInnerRadius1, geo::fiberLength/2, 0 * deg, 360 * deg);
   }
 
-  G4LogicalVolume *logicFiberClad2 = new G4LogicalVolume(fiberClad2, materials.PMMA142, "OuterCladding");
-  G4LogicalVolume *logicFiberClad1 = new G4LogicalVolume(fiberClad1, materials.PMMA149, "InnerCladding");
-  G4LogicalVolume *logicFiberCore = new G4LogicalVolume(fiberCore, materials.BCF10, "Core");
+  G4LogicalVolume *logicFiberClad2 = new G4LogicalVolume(fiberClad2, materials.Clad2, "OuterCladding");
+  G4LogicalVolume *logicFiberClad1 = new G4LogicalVolume(fiberClad1, materials.Clad1, "InnerCladding");
+  G4LogicalVolume *logicFiberCore = new G4LogicalVolume(fiberCore, materials.Core, "Core");
 
   // construct full fiber (place IC and core inside OC)
   G4VPhysicalVolume *PhysClad1 = new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1, "InnerCladding", logicFiberClad2, false, 0,true);
@@ -123,9 +123,9 @@ FlexRayDetectorConstruction::Construct()
         fiberCoreY = new G4Torus("Core", 0, geo::fiberInnerRadius1, geo::layerRadius(iLayer), 90*deg - geo::bendTheta/2, geo::bendTheta);
       }
 
-      logicFiberClad2Y = new G4LogicalVolume(fiberClad2Y, materials.PMMA142, "OuterCladding");
-      G4LogicalVolume *logicFiberClad1Y = new G4LogicalVolume(fiberClad1Y, materials.PMMA149, "InnerCladding");
-      G4LogicalVolume *logicFiberCoreY = new G4LogicalVolume(fiberCoreY, materials.BCF10, "Core");
+      logicFiberClad2Y = new G4LogicalVolume(fiberClad2Y, materials.Clad2, "OuterCladding");
+      G4LogicalVolume *logicFiberClad1Y = new G4LogicalVolume(fiberClad1Y, materials.Clad1, "InnerCladding");
+      G4LogicalVolume *logicFiberCoreY = new G4LogicalVolume(fiberCoreY, materials.Core, "Core");
 
       G4VPhysicalVolume *PhysClad1Y = new G4PVPlacement(0, G4ThreeVector(), logicFiberClad1Y, "InnerCladding", logicFiberClad2Y, false, 0,true);
       G4VPhysicalVolume *PhysCoreY = new G4PVPlacement(0, G4ThreeVector(), logicFiberCoreY, "Core", logicFiberClad1Y, false, 0,true);

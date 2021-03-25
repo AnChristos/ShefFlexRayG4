@@ -24,6 +24,8 @@ public:
   G4Material *BCF60; // improved radiation hardness
   G4Material *BC505; // high-light-yield liquid scintillator
 
+  G4Material *Core, *Clad1, *Clad2;
+
 private:
   std::vector<G4double> CurveToHistX(std::vector<G4double> curveX);
   std::vector<G4double> CurveToHistY(std::vector<G4double> curveX, std::vector<G4double> curveY);

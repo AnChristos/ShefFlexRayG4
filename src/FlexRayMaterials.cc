@@ -120,6 +120,10 @@ FlexRayMaterials::FlexRayMaterials(){
   MPT_BC505->AddConstProperty("FASTTIMECONSTANT", 2.5 * ns);
   BC505->SetMaterialPropertiesTable(MPT_BC505);
 
+
+  Core = BCF10;
+  Clad1 = PMMA149;
+  Clad2 = PMMA149;
 }
 
 // take a curve (defined by line segments between (x,y) points) and convert it to a histogram (interpolating between points)
