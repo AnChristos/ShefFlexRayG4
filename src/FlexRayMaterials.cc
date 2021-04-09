@@ -60,6 +60,18 @@ FlexRayMaterials::FlexRayMaterials(){
   MPT_BCF10->AddConstProperty("FASTTIMECONSTANT", 2.7 * ns);
   BCF10->SetMaterialPropertiesTable(MPT_BCF10);
 
+  // magic material for illustration purposes:
+  BCF10_magic = sNistMan->ConstructNewMaterial("BCF10_magic", PolystyreneElements, PolystyreneAtoms, PolystyreneDensity);
+  G4MaterialPropertiesTable* MPT_BCF10_magic = new G4MaterialPropertiesTable();
+  FillConstProperty(MPT_BCF10_magic, "RINDEX", 1.6);
+  FillConstProperty(MPT_BCF10_magic, "ABSLENGTH", 2.2*m);
+  FillPropertyFromCurve(MPT_BCF10_magic, "FASTCOMPONENT", BCF10_energy, BCF10_yield, 25);
+  BCF10_magic->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
+  MPT_BCF10_magic->AddConstProperty("SCINTILLATIONYIELD", 8000/MeV);
+  MPT_BCF10_magic->AddConstProperty("RESOLUTIONSCALE", 1.0); // I think this isn't a property of the material, just of the simulation
+  MPT_BCF10_magic->AddConstProperty("FASTTIMECONSTANT", 0.135 * ns);
+  BCF10_magic->SetMaterialPropertiesTable(MPT_BCF10_magic);
+
   //SGC BCF-12: improved transmission for long fibers
   std::vector<G4double> BCF12_energy = {2.15*eV, 2.33*eV, 2.44*eV, 2.56*eV, 2.58*eV,
 					2.62*eV, 2.69*eV, 2.84*eV, 2.90*eV, 2.95*eV,
@@ -120,10 +132,32 @@ FlexRayMaterials::FlexRayMaterials(){
   MPT_BC505->AddConstProperty("FASTTIMECONSTANT", 2.5 * ns);
   BC505->SetMaterialPropertiesTable(MPT_BC505);
 
+  // CeBr3: crystalline, high light yield
+  std::vector<G4String> CeBrElements = {"Ce", "Br"};
+  std::vector<G4int> CeBrAtoms = {1, 3};
+  G4double CeBrDensity = 5.1 * g/cm3;
+  std::vector<G4double> CeBr_energy = {2.36*eV, 2.48*eV, 2.56*eV, 2.70*eV, 2.76*eV,
+					2.81*eV, 2.87*eV, 2.91*eV, 2.95*eV, 2.97*eV,
+					3.05*eV, 3.14*eV, 3.28*eV};
+  std::vector<G4double> CeBr_yield = { 0.00, 0.15, 0.27, 0.50, 0.67,
+					0.78, 0.82, 0.95, 0.98, 0.96,
+					0.80, 0.53, 0};
+
+  CeBr3 = sNistMan->ConstructNewMaterial("CeBr3", CeBrElements, CeBrAtoms, CeBrDensity);
+  G4MaterialPropertiesTable* MPT_CeBr = new G4MaterialPropertiesTable();
+  FillConstProperty(MPT_CeBr, "RINDEX", 2.09);
+  FillConstProperty(MPT_CeBr, "ABSLENGTH", 2.2*m); // unknown
+  FillPropertyFromCurve(MPT_CeBr, "FASTCOMPONENT", BC505_energy, BC505_yield, 25);
+  CeBr3->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
+  MPT_CeBr->AddConstProperty("SCINTILLATIONYIELD", 60000/MeV);
+  MPT_CeBr->AddConstProperty("RESOLUTIONSCALE", 1.0); // I think this isn't a property of the material, just of the simulation
+  MPT_CeBr->AddConstProperty("FASTTIMECONSTANT", 19 * ns);
+  CeBr3->SetMaterialPropertiesTable(MPT_CeBr);
+
 
   Core = BCF10;
   Clad1 = PMMA149;
-  Clad2 = PMMA149;
+  Clad2 = PMMA142;
 }
 
 // take a curve (defined by line segments between (x,y) points) and convert it to a histogram (interpolating between points)

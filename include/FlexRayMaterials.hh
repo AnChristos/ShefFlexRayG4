@@ -20,9 +20,11 @@ public:
 
   // scintillating materials
   G4Material *BCF10;
+  G4Material *BCF10_magic; // doesn't exist, but wouldn't it be nice if it did?
   G4Material *BCF12; // improved transmission for long fibers
   G4Material *BCF60; // improved radiation hardness
   G4Material *BC505; // high-light-yield liquid scintillator
+  G4Material *CeBr3; // crystalline, high light yield
 
   G4Material *Core, *Clad1, *Clad2;
 
