@@ -1,4 +1,7 @@
 #include "FlexRayRunAction.hh"
+#include "FlexRayGeometry.hh"
+#include "G4LogicalVolumeStore.hh"
+#include "G4Material.hh"
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -31,6 +34,14 @@ FlexRayRunAction::FlexRayRunAction()
   fAnalysisManager->CreateNtupleDColumn(1, "x");
   fAnalysisManager->CreateNtupleDColumn(1, "y");
   fAnalysisManager->FinishNtuple(1);
+
+  fAnalysisManager->CreateNtuple("Params", "Detector Parameters");
+  fAnalysisManager->CreateNtupleDColumn(2, "scint_yield");
+  fAnalysisManager->CreateNtupleDColumn(2, "scint_time");
+  fAnalysisManager->CreateNtupleDColumn(2, "scint_index");
+  fAnalysisManager->CreateNtupleDColumn(2, "n_fibers");
+  fAnalysisManager->CreateNtupleDColumn(2, "fiber_spacing");
+  fAnalysisManager->FinishNtuple(2);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -48,6 +59,15 @@ void FlexRayRunAction::BeginOfRunAction(const G4Run*)
   fAnalysisManager->OpenFile("FlexRay");
   // This method is called at the beginning of each run.
   // We can use it to initialize variables, arrays, etc.
+
+  G4MaterialPropertiesTable *core = G4LogicalVolumeStore::GetInstance()->GetVolume("Core")->GetMaterial()->GetMaterialPropertiesTable();
+
+  fAnalysisManager->FillNtupleDColumn(2, 0, core->GetConstProperty("SCINTILLATIONYIELD"));
+  fAnalysisManager->FillNtupleDColumn(2, 1, core->GetConstProperty("FASTTIMECONSTANT"));
+  fAnalysisManager->FillNtupleDColumn(2, 2, core->GetProperty("RINDEX")->GetMinValue());
+  fAnalysisManager->FillNtupleDColumn(2, 3, geo::numFibers);
+  fAnalysisManager->FillNtupleDColumn(2, 4, geo::fiberSpacing);
+  fAnalysisManager->AddNtupleRow(2);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
