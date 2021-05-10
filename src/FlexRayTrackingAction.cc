@@ -92,7 +92,7 @@ void FlexRayTrackingAction::LogXRay(const G4Track* track)
     x = atan2(x, pos.z()+geo::bendRadius) * geo::bendRadius;
   }
 
-  fEventAction->LogXRay(pos.x(), pos.y());
+  fEventAction->LogXRay(0, pos.x(), pos.y());
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

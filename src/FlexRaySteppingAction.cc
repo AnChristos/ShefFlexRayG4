@@ -35,7 +35,7 @@ void FlexRaySteppingAction::UserSteppingAction(const G4Step* step)
     x = atan2(x, pos.z()+geo::bendRadius) * geo::bendRadius;
   }
 
-  fEventAction->LogXRay(x, pos.y());
+  fEventAction->LogXRay(track->GetKineticEnergy(), x, pos.y());
 
   track->SetUserInformation(new G4VUserTrackInformation("XRayAlreadyInteracted"));
 
