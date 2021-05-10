@@ -1,0 +1,20 @@
+/run/initialize
+
+/control/alias emax 50
+
+/gps/particle gamma
+
+/gps/ene/type Lin
+/gps/ene/min 10 keV
+/gps/ene/max {emax} keV
+/gps/ene/intercept {emax}
+/gps/ene/gradient -1000
+
+/gps/position 0 0 -100 mm
+
+# why does this need to be reversed? I have no idea, but this is how it works.
+/gps/ang/type iso
+/gps/ang/mintheta 169 deg
+/gps/ang/maxtheta 180 deg
+
+/run/beamOn 1000

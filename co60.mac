@@ -1,0 +1,25 @@
+/run/initialize
+
+/gps/particle gamma
+
+/gps/ene/type Arb
+/gps/hist/type arb
+# default energy units are MeV
+/gps/hist/point 1.1730 0
+/gps/hist/point 1.1731 0.9988
+/gps/hist/point 1.1733 0
+/gps/hist/point 1.3324 1
+/gps/hist/point 1.3326 0
+/gps/hist/inter Lin
+
+/gps/pos/type Plane
+/gps/pos/shape Square
+/gps/pos/halfx 22 mm
+/gps/pos/halfy 22 mm
+/gps/pos/centre 0 0 -200 mm
+
+/gps/ang/type iso
+/gps/ang/mintheta 0 deg
+/gps/ang/maxtheta 15 deg
+
+/run/beamOn 1000
