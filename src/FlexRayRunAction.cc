@@ -27,6 +27,15 @@ FlexRayRunAction::FlexRayRunAction()
   // 15: all four sides
   fAnalysisManager->CreateH1("Detectors", "Detectors Hit", 16, -0.5, 15.5);
 
+  // energy deposition in a fiber core.  Is this the correct measurement to use for radiation hardness calculations?
+  fAnalysisManager->CreateH1("Edep", "Energy Deposited [keV]", 120, 0, 120);
+
+  // electron-ion pairs.  useful for semiconductors.  what does it tell me in scintillators?
+  fAnalysisManager->CreateH1("EHoles", "Electron-Hole pairs produced", 100, 0, 500000);
+
+  // electron-hole pairs created in a (semiconductor) fiber core.
+  //fAnalysisManager->CreateH1("Edep", "Energy Deposited [keV]", 100, 0, 1000);
+
   // MC truth
   fAnalysisManager->CreateNtuple("Xrays", "X-Ray hits");
   fAnalysisManager->CreateNtupleIColumn(1, "event");

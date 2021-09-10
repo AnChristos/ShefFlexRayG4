@@ -27,6 +27,8 @@ void FlexRayEventAction::BeginOfEventAction(const G4Event* event)
   fEventID = event->GetEventID();
   fDetected = 0;
   fIgnoreXRays = false;
+  fEnergyDeposited = 0;
+  fEHoles = 0;
   // This method is called at the beginning of each event.
   // We can use it to initialize variables, arrays, etc.
 }
@@ -42,6 +44,8 @@ void FlexRayEventAction::EndOfEventAction(const G4Event*)
   if(fDetected > 0) fRunAction->LogDetected();
   if(fDetected > 4 && (fDetected != 8 && fDetected != 12)) fpEventManager->KeepTheCurrentEvent();
   fAnalysisManager->FillH1(0, fDetected);
+  if(fEnergyDeposited > 0) fAnalysisManager->FillH1(1, fEnergyDeposited/keV);
+  if(fEHoles > 0) fAnalysisManager->FillH1(2, fEHoles);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -70,4 +74,9 @@ void FlexRayEventAction::LogXRay(G4double energy, G4double x, G4double y)
   fAnalysisManager->AddNtupleRow(1);
 
   fIgnoreXRays = true; // only record first X-ray in event, not secondaries after scintillation.
+}
+
+void FlexRayEventAction::AddEnergyDeposit(G4double energy, G4int eholes){
+  fEnergyDeposited += energy;
+  fEHoles += eholes;
 }

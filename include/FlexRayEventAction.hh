@@ -22,6 +22,7 @@ public:
 
   void LogDetection(int detectorIndex, G4double energy, G4double time, G4double x, G4double y);
   void LogXRay(G4double energy, G4double x, G4double y);
+  void AddEnergyDeposit(G4double energy, G4int eholes);
 
 private:
   FlexRayRunAction *fRunAction;
@@ -29,6 +30,8 @@ private:
   G4AnalysisManager *fAnalysisManager;
   G4int fEventID;
   G4bool fIgnoreXRays;
+  G4double fEnergyDeposited;
+  G4int fEHoles;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
