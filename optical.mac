@@ -27,11 +27,11 @@
 #Fiber Center: 0 1.1 -1.5 mm
 #Fiber Back: 0 1.1 -2.4504 mm
 #Fiber Edge: 0 2.0504 -1.5 mm
-/gps/position 0 1.1 -1.5 mm
+/gps/position 0 0 0 mm
 
-/gps/ang/type cos
-/gps/ang/mintheta 0.0 deg
-/gps/ang/maxtheta 90.0 deg
+/gps/ang/type iso
+#/gps/ang/mintheta 0.0 deg
+#/gps/ang/maxtheta 90.0 deg
 #
 #
-/run/beamOn 100
+/run/beamOn 10000
