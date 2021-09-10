@@ -7,19 +7,30 @@
 namespace geo
 {
 
-  const G4bool squareFibers = true;
-  const G4double fiberLength = 0.2 * m;
-  const G4double fiberRadius = 1 * mm;
-  const G4double fiberInnerRadius2 = 0.99 * fiberRadius; // inner radius of second cladding
-  const G4double fiberInnerRadius1 = 0.96 * fiberRadius; // inner radius of first cladding
+  const G4bool squareFibers = false;
+  const G4double fiberLength = 30 * cm;
+  const G4double fiberRadius = 350 * um / 2;
+  const G4double fiberInnerRadius2 = 250 * um / 2; // inner radius of second cladding
+  const G4double fiberInnerRadius1 = 50 * um / 2; // inner radius of first cladding
 
-  const G4double fiberRoughness = 0.93;
+  // join to optical fiber: 0: none, 1: direct, 2: narrow, 3: two-hole
+  const G4int fiberJoin = 0;
+  const G4double fillGapLength = 50 * um; // used for type 3
+  const G4double fillHolePosition = 80 * um; // used for type 3
+  const G4double fillHoleRadius = 25 * um; // used for type 2 and type 3
+  const G4double intermediateLength = 5 * mm; // used for type 2 and type 3.  these lengths are included in fiberLength above.
+  const G4double endFiberLength = 5 * cm; // these lengths are included in fiberLength above.
+  const G4double endFiberInnerRadius = 85 * um / 2; //used for type 1, type 2, type 3
+  const G4double housingLength = 2.5 * cm; // used for type 3
+  const G4double housingRadius = 320 * um / 2; // used for type 3
 
-  const G4int numFibers = 20;
-  const G4double fiberSpacing = fiberRadius*2 + 0.2 * mm;
+  const G4double fiberRoughness = 1; // 1 is perfectly smooth
 
-  const G4int numLayers = 4;
-  const G4double layerSpacing = fiberRadius*2 + 1 * mm;
+  const G4int numFibers = 1;
+  const G4double fiberSpacing = fiberRadius*2 * 1.1;
+
+  const G4int numLayers = 1;
+  const G4double layerSpacing = fiberRadius*2 *1.1;
 
   // ----------------
   //Either give a theta and calculate the radius or give a radius and calculate the theta.
@@ -33,6 +44,8 @@ namespace geo
   // helper functions to position layers
   static G4double layerPosition(int layer) {return (layer + 0.5 - numLayers*0.5) * layerSpacing; }
   static G4double layerRadius(int layer) { return bendRadius + layerPosition(layer); } // calculated from radius or theta
+
+  const G4double foilThickness = -1 * um; // less than 0 for no foil, standard household Al foil is 16 um
 }
 
 #endif

@@ -17,6 +17,9 @@ public:
   G4Material *PMMA149;
   G4Material *PMMA142;
   G4Material *SiGlass;
+  G4Material *CoreGlass;
+  G4Material *MY130;
+  G4Material *Air;
 
   // scintillating materials
   G4Material *BCF10;
@@ -26,7 +29,10 @@ public:
   G4Material *BC505; // high-light-yield liquid scintillator
   G4Material *CeBr3; // crystalline, high light yield
 
+  G4Material *CdTe; // semiconductor
+
   G4Material *Core, *Clad1, *Clad2;
+  G4Material *EndFiberCore;
 
 private:
   std::vector<G4double> CurveToHistX(std::vector<G4double> curveX);

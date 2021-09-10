@@ -8,6 +8,7 @@
 #include "G4Material.hh"
 #include "G4NistManager.hh"
 #include "G4PVPlacement.hh"
+#include "G4Sphere.hh"
 #include "G4Tubs.hh"
 #include "G4Torus.hh"
 #include "G4UserLimits.hh"
@@ -83,14 +84,19 @@ FlexRayDetectorConstruction::Construct()
    */
   G4VSolid *fiberCore, *fiberClad1, *fiberClad2;
 
+  G4double coreLength = geo::fiberLength;
+  if(geo::fiberJoin == 1) coreLength -= 2*(geo::endFiberLength); // direct join
+  if(geo::fiberJoin == 2) coreLength -= 2*(geo::intermediateLength + geo::endFiberLength); // narrow fiber join
+  if(geo::fiberJoin == 3) coreLength -= 2*(geo::fillGapLength + geo::intermediateLength + geo::endFiberLength); // two-hole join
+
   if(geo::squareFibers){
     fiberClad2 = new G4Box("OuterCladding", geo::fiberRadius, geo::fiberRadius, geo::fiberLength/2);
     fiberClad1 = new G4Box("InnerCladding", geo::fiberInnerRadius2, geo::fiberInnerRadius2, geo::fiberLength/2);
-    fiberCore = new G4Box("Core", geo::fiberInnerRadius1, geo::fiberInnerRadius1, geo::fiberLength/2);
+    fiberCore = new G4Box("Core", geo::fiberInnerRadius1, geo::fiberInnerRadius1, coreLength/2);
   }else{
     fiberClad2 = new G4Tubs("OuterCladding", 0, geo::fiberRadius, geo::fiberLength/2, 0 * deg, 360 * deg);
     fiberClad1 = new G4Tubs("InnerCladding", 0, geo::fiberInnerRadius2, geo::fiberLength/2, 0 * deg, 360 * deg);
-    fiberCore = new G4Tubs("Core", 0, geo::fiberInnerRadius1, geo::fiberLength/2, 0 * deg, 360 * deg);
+    fiberCore = new G4Tubs("Core", 0, geo::fiberInnerRadius1, coreLength/2, 0 * deg, 360 * deg);
   }
 
   G4LogicalVolume *logicFiberClad2 = new G4LogicalVolume(fiberClad2, materials.Clad2, "OuterCladding");
@@ -105,6 +111,76 @@ FlexRayDetectorConstruction::Construct()
   G4OpticalSurface *opSurface = new G4OpticalSurface("OpSurface", glisur, ground, dielectric_dielectric, geo::fiberRoughness);
   new G4LogicalBorderSurface("SurfClad1Out", PhysCore, PhysClad1, opSurface);
   new G4LogicalBorderSurface("SurfClad1In", PhysClad1, PhysCore, opSurface);
+
+  if(geo::fiberJoin == 1){
+    G4VSolid *endCore;
+    endCore = new G4Tubs("EndCore", 0, geo::endFiberInnerRadius, (geo::endFiberLength)/2, 0*deg, 360*deg);
+    G4LogicalVolume *logicEndCore = new G4LogicalVolume(endCore, materials.EndFiberCore, "Core");
+    new G4PVPlacement(0, G4ThreeVector(0, 0, (geo::fiberLength - geo::endFiberLength)/2), logicEndCore, "Core", logicFiberClad1, false, 0, true);
+    new G4PVPlacement(0, G4ThreeVector(0, 0, -(geo::fiberLength - geo::endFiberLength)/2), logicEndCore, "Core", logicFiberClad1, false, 0, true);
+  }
+  if(geo::fiberJoin == 2){
+    G4VSolid *fillHole, *airGap, *airMeniscus, *endCore;
+
+    fillHole = new G4Tubs("FillHole", 0, geo::fillHoleRadius, geo::intermediateLength/2, 0*deg, 360*deg);
+    airGap = new G4Tubs("AirGap", 0, geo::fillHoleRadius, geo::intermediateLength/4, 0*deg, 360*deg);
+    airMeniscus = new G4Sphere("AirMeniscus", 0, geo::fillHoleRadius, 0*deg, 360*deg, 90*deg, 180*deg);
+    endCore = new G4Tubs("EndCore", 0, geo::endFiberInnerRadius, geo::endFiberLength/2, 0*deg, 360*deg);
+
+    G4LogicalVolume *logicFillHole = new G4LogicalVolume(fillHole, materials.Core, "FillHole");
+    G4LogicalVolume *logicAirGap = new G4LogicalVolume(airGap, materials.Air, "AirGap");
+    G4LogicalVolume *logicAirMeniscus = new G4LogicalVolume(airMeniscus, materials.Air, "AirGap");
+    G4LogicalVolume *logicEndCore = new G4LogicalVolume(endCore, materials.EndFiberCore, "Core");
+
+    new G4PVPlacement(0, G4ThreeVector(0, 0, (geo::intermediateLength)/4), logicAirGap, "AirGap", logicFillHole, false, 0, true);
+    new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicAirMeniscus, "AirGap", logicFillHole, false, 0, true);
+
+    new G4PVPlacement(0, G4ThreeVector(0, 0, coreLength/2 + geo::intermediateLength/2), logicFillHole, "FillHole", logicFiberClad1, false, 0, true);
+
+    G4RotationMatrix *flip = new G4RotationMatrix();
+    flip->rotateX(180*deg);
+    new G4PVPlacement(flip, G4ThreeVector(0, 0, -coreLength/2 - geo::intermediateLength/2), logicFillHole, "FillHole", logicFiberClad1, false, 0, true);
+
+    new G4PVPlacement(0, G4ThreeVector(0, 0, (geo::fiberLength - geo::endFiberLength)/2), logicEndCore, "Core", logicFiberClad1, false, 0, true);
+    new G4PVPlacement(0, G4ThreeVector(0, 0, -(geo::fiberLength - geo::endFiberLength)/2), logicEndCore, "Core", logicFiberClad1, false, 0, true);
+  }
+  if(geo::fiberJoin == 3){ // two-hole join
+    G4VSolid *liquidGap, *housingCapillary, *fillHole, *airGap, *airMeniscus, *endCore;
+
+    liquidGap = new G4Tubs("LiquidGap", 0, geo::fiberInnerRadius2, geo::fillGapLength/2, 0*deg, 360*deg);
+    housingCapillary = new G4Tubs("Housing", geo::fiberInnerRadius2, geo::housingRadius, geo::housingLength, 0*deg, 360*deg);
+    fillHole = new G4Tubs("FillHole", 0, geo::fillHoleRadius, geo::intermediateLength/2, 0*deg, 360*deg);
+    airGap = new G4Tubs("AirGap", 0, geo::fillHoleRadius, geo::intermediateLength/4, 0*deg, 360*deg);
+    airMeniscus = new G4Sphere("AirMeniscus", 0, geo::fillHoleRadius, 0*deg, 360*deg, 90*deg, 180*deg);
+    endCore = new G4Tubs("EndCore", 0, geo::endFiberInnerRadius, (geo::endFiberLength + geo::intermediateLength)/2, 0*deg, 360*deg);
+
+    G4LogicalVolume *logicLiquidGap = new G4LogicalVolume(liquidGap, materials.Core, "LiquidGap");
+    G4LogicalVolume *logicHousingCapillary = new G4LogicalVolume(housingCapillary, materials.Clad1, "Housing");
+    G4LogicalVolume *logicFillHole = new G4LogicalVolume(fillHole, materials.Core, "FillHole");
+    G4LogicalVolume *logicAirGap = new G4LogicalVolume(airGap, materials.Air, "AirGap");
+    G4LogicalVolume *logicAirMeniscus = new G4LogicalVolume(airMeniscus, materials.Air, "AirGap");
+    G4LogicalVolume *logicEndCore = new G4LogicalVolume(endCore, materials.EndFiberCore, "Core");
+
+    new G4PVPlacement(0, G4ThreeVector(0, 0, (coreLength+geo::fillGapLength)/2), logicLiquidGap, "LiquidGap", logicFiberClad1, false, 0, true);
+    new G4PVPlacement(0, G4ThreeVector(0, 0, -(coreLength+geo::fillGapLength)/2), logicLiquidGap, "LiquidGap", logicFiberClad1, false, 0, true);
+
+    new G4PVPlacement(0, G4ThreeVector(0, 0, (coreLength+geo::fillGapLength)/2), logicHousingCapillary, "Housing", logicFiberClad2, false, 0, true);
+    new G4PVPlacement(0, G4ThreeVector(0, 0, -(coreLength+geo::fillGapLength)/2), logicHousingCapillary, "Housing", logicFiberClad2, false, 0, true);
+
+    new G4PVPlacement(0, G4ThreeVector(0, 0, (geo::intermediateLength)/4), logicAirGap, "AirGap", logicFillHole, false, 0, true);
+    new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicAirMeniscus, "AirGap", logicFillHole, false, 0, true);
+
+    new G4PVPlacement(0, G4ThreeVector(0, geo::fillHolePosition, coreLength/2 + geo::fillGapLength + geo::intermediateLength/2), logicFillHole, "FillHole", logicFiberClad1, false, 0, true);
+    new G4PVPlacement(0, G4ThreeVector(0, -geo::fillHolePosition, coreLength/2 + geo::fillGapLength + geo::intermediateLength/2), logicFillHole, "FillHole", logicFiberClad1, false, 0, true);
+
+    G4RotationMatrix *flip = new G4RotationMatrix();
+    flip->rotateX(180*deg);
+    new G4PVPlacement(flip, G4ThreeVector(0, geo::fillHolePosition, -coreLength/2 - geo::fillGapLength - geo::intermediateLength/2), logicFillHole, "FillHole", logicFiberClad1, false, 0, true);
+    new G4PVPlacement(flip, G4ThreeVector(0, -geo::fillHolePosition, -coreLength/2 - geo::fillGapLength - geo::intermediateLength/2), logicFillHole, "FillHole", logicFiberClad1, false, 0, true);
+
+    new G4PVPlacement(0, G4ThreeVector(0, 0, (geo::fiberLength - geo::intermediateLength - geo::endFiberLength)/2), logicEndCore, "Core", logicFiberClad1, false, 0, true);
+    new G4PVPlacement(0, G4ThreeVector(0, 0, -(geo::fiberLength - geo::intermediateLength - geo::endFiberLength)/2), logicEndCore, "Core", logicFiberClad1, false, 0, true);
+  }
 
   G4LogicalVolume *logicFiberClad2Y = logicFiberClad2; // this will be replaced if the detector is bent.
 
@@ -175,6 +251,13 @@ FlexRayDetectorConstruction::Construct()
 
       new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, iLayer*geo::numFibers + i, true); // need the if there in case we're building an odd number of layers
     }
+  }
+
+  // add Pb foil
+  if(geo::bendTheta < 0.01 * deg && geo::foilThickness > 0){
+    G4Box* boxFoil = new G4Box("Foil", geo::numFibers * geo::fiberSpacing / 2, geo::numFibers * geo::fiberSpacing / 2, geo::foilThickness/2);
+    G4LogicalVolume* logicFoil = new G4LogicalVolume(boxFoil, sNistMan->FindOrBuildMaterial("G4_Pb"), "Foil");
+    new G4PVPlacement(0, G4ThreeVector(0,0,geo::layerPosition(-1)), logicFoil, "Foil", logicWorld, false, 0, true);
   }
 
   // print out fiber location for testing

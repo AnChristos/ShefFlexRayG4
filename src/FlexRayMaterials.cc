@@ -26,15 +26,42 @@ FlexRayMaterials::FlexRayMaterials(){
   FillConstProperty(MPT_PMMA142, "ABSLENGTH", 5.40 * m);
   PMMA142->SetMaterialPropertiesTable(MPT_PMMA142);
 
+  MY130 = sNistMan->ConstructNewMaterial("MY-130", PMMAelements, PMMAnatoms, PMMAdensity);
+  G4MaterialPropertiesTable* MPT_MY130 = new G4MaterialPropertiesTable();
+  FillConstProperty(MPT_MY130, "RINDEX", 1.3);
+  FillConstProperty(MPT_MY130, "ABSLENGTH", 5.40 * m);
+  MY130->SetMaterialPropertiesTable(MPT_MY130);
+
   // Glass
   std::vector<G4String> SiGlassElements = { "Si", "O" };
   std::vector<G4int> SiGlassAtoms = { 1, 2 };
   G4double SiGlassDensity = 2.203 * g / cm3;
   SiGlass = sNistMan->ConstructNewMaterial("SiGlass", SiGlassElements, SiGlassAtoms, SiGlassDensity);
   G4MaterialPropertiesTable* MPT_SiGlass = new G4MaterialPropertiesTable();
-  FillConstProperty(MPT_SiGlass, "RINDEX", 1.47);
+  FillConstProperty(MPT_SiGlass, "RINDEX", 1.467);
   FillConstProperty(MPT_SiGlass, "ABSLENGTH", 10 * m); // this is probably an underestimate, but it's long enough not to matter.
   SiGlass->SetMaterialPropertiesTable(MPT_SiGlass);
+
+  std::vector<G4String> CoreGlassElements = { "Si", "O" };
+  std::vector<G4int> CoreGlassAtoms = { 1, 2 };
+  G4double CoreGlassDensity = 2.203 * g / cm3;
+  CoreGlass = sNistMan->ConstructNewMaterial("CoreGlass", CoreGlassElements, CoreGlassAtoms, CoreGlassDensity);
+  G4MaterialPropertiesTable* MPT_CoreGlass = new G4MaterialPropertiesTable();
+  FillConstProperty(MPT_CoreGlass, "RINDEX", 1.467);
+  FillConstProperty(MPT_CoreGlass, "ABSLENGTH", 10 * m); // this is probably an underestimate, but it's long enough not to matter.
+  CoreGlass->SetMaterialPropertiesTable(MPT_CoreGlass);
+
+  // Air with refractive index (for bubbles)
+
+  std::vector<G4String> AirElements = { "C", "N", "O", "Ar"};
+  std::vector<G4double> AirAtoms = { 0.02, 78.44, 21.07, 0.47 };
+  G4double AirDensity = 1.205 * mg / cm3;
+  Air = sNistMan->ConstructNewMaterial("AirBubble", AirElements, AirAtoms, AirDensity);
+  G4MaterialPropertiesTable* MPT_Air = new G4MaterialPropertiesTable();
+  FillConstProperty(MPT_Air, "RINDEX", 1.0003);
+  FillConstProperty(MPT_Air, "ABSLENGTH", 1000 * m);
+  Air->SetMaterialPropertiesTable(MPT_Air);
+
 
   // Scintillating Materials
 
@@ -154,10 +181,26 @@ FlexRayMaterials::FlexRayMaterials(){
   MPT_CeBr->AddConstProperty("FASTTIMECONSTANT", 19 * ns);
   CeBr3->SetMaterialPropertiesTable(MPT_CeBr);
 
+  // Semiconductor materials
+  std::vector<G4String> CdTeElements = {"Cd", "Te"};
+  std::vector<G4int> CdTeAtoms = {1, 1};
+  G4double CdTeDensity = 5.85 * g/cm3;
+  CdTe = sNistMan->ConstructNewMaterial("CdTe", CdTeElements, CdTeAtoms, CdTeDensity);
+  G4MaterialPropertiesTable* MPT_CdTe = new G4MaterialPropertiesTable();
+  FillConstProperty(MPT_CdTe, "RINDEX", 2.09);
+  FillConstProperty(MPT_CdTe, "ABSLENGTH", 1*um);
+  CdTe->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
+  MPT_CdTe->AddConstProperty("RESOLUTIONSCALE", 1.0); // I think this isn't a property of the material, just of the simulation
+  MPT_CdTe->AddConstProperty("SCINTILLATIONYIELD", 0/MeV); // simulation won't work unless I give it these properties.  why?
+  MPT_CdTe->AddConstProperty("FASTTIMECONSTANT", 1 * ns); // simulation won't work unless I give it these properties.  why?
+  MPT_CdTe->AddConstProperty("EHOLEPRODUCTION", 4.43*eV); // https://www.osti.gov/etdeweb/servlets/purl/20267247
+  CdTe->SetMaterialPropertiesTable(MPT_CdTe);
 
-  Core = BCF10;
-  Clad1 = PMMA149;
-  Clad2 = PMMA142;
+  Core = BC505;
+  Clad1 = SiGlass;
+  Clad2 = MY130;
+
+  EndFiberCore = CoreGlass;
 }
 
 // take a curve (defined by line segments between (x,y) points) and convert it to a histogram (interpolating between points)
