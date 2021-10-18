@@ -123,8 +123,8 @@ FlexRayDetectorConstruction::Construct()
     G4VSolid *fillHole, *airGap, *airMeniscus, *endCore;
 
     fillHole = new G4Tubs("FillHole", 0, geo::fillHoleRadius, geo::intermediateLength/2, 0*deg, 360*deg);
-    airGap = new G4Tubs("AirGap", 0, geo::fillHoleRadius, geo::intermediateLength/4, 0*deg, 360*deg);
-    airMeniscus = new G4Sphere("AirMeniscus", 0, geo::fillHoleRadius, 0*deg, 360*deg, 90*deg, 180*deg);
+    airGap = new G4Tubs("AirGap", 0, geo::fillHoleRadius*1.01, geo::intermediateLength/4, 0*deg, 360*deg);
+    airMeniscus = new G4Sphere("AirMeniscus", 0, geo::fillHoleRadius*1.01, 0*deg, 360*deg, 90*deg, 180*deg);
     endCore = new G4Tubs("EndCore", 0, geo::endFiberInnerRadius, geo::endFiberLength/2, 0*deg, 360*deg);
 
     G4LogicalVolume *logicFillHole = new G4LogicalVolume(fillHole, materials.Core, "FillHole");
@@ -150,8 +150,8 @@ FlexRayDetectorConstruction::Construct()
     liquidGap = new G4Tubs("LiquidGap", 0, geo::fiberInnerRadius2, geo::fillGapLength/2, 0*deg, 360*deg);
     housingCapillary = new G4Tubs("Housing", geo::fiberInnerRadius2, geo::housingRadius, geo::housingLength, 0*deg, 360*deg);
     fillHole = new G4Tubs("FillHole", 0, geo::fillHoleRadius, geo::intermediateLength/2, 0*deg, 360*deg);
-    airGap = new G4Tubs("AirGap", 0, geo::fillHoleRadius, geo::intermediateLength/4, 0*deg, 360*deg);
-    airMeniscus = new G4Sphere("AirMeniscus", 0, geo::fillHoleRadius, 0*deg, 360*deg, 90*deg, 180*deg);
+    airGap = new G4Tubs("AirGap", 0, geo::fillHoleRadius*1.01, geo::intermediateLength/4, 0*deg, 360*deg);
+    airMeniscus = new G4Sphere("AirMeniscus", 0, geo::fillHoleRadius*1.01, 0*deg, 360*deg, 90*deg, 180*deg);
     endCore = new G4Tubs("EndCore", 0, geo::endFiberInnerRadius, (geo::endFiberLength + geo::intermediateLength)/2, 0*deg, 360*deg);
 
     G4LogicalVolume *logicLiquidGap = new G4LogicalVolume(liquidGap, materials.Core, "LiquidGap");
