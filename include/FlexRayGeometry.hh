@@ -31,6 +31,7 @@ namespace geo
 
   const G4int numLayers = 1;
   const G4double layerSpacing = fiberRadius*2 *1.1;
+  const G4double detectorSpacing = 5 * cm; // distance between 2-layer groups
 
   // ----------------
   //Either give a theta and calculate the radius or give a radius and calculate the theta.
@@ -42,7 +43,8 @@ namespace geo
   // -----------------
 
   // helper functions to position layers
-  static G4double layerPosition(int layer) {return (layer + 0.5 - numLayers*0.5) * layerSpacing; }
+  //static G4double layerPosition(int layer) {return (layer + 0.5 - numLayers*0.5) * layerSpacing; }
+  static G4double layerPosition(int layer) {return layer * layerSpacing + (layer/2)*detectorSpacing - (numLayers-1)/2*layerSpacing - ((numLayers-1)/2) * detectorSpacing; }
   static G4double layerRadius(int layer) { return bendRadius + layerPosition(layer); } // calculated from radius or theta
 
   const G4double foilThickness = -1 * um; // less than 0 for no foil, standard household Al foil is 16 um
