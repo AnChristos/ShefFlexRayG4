@@ -71,9 +71,15 @@ void FlexRayRunAction::BeginOfRunAction(const G4Run*)
 
   G4MaterialPropertiesTable *core = G4LogicalVolumeStore::GetInstance()->GetVolume("Core")->GetMaterial()->GetMaterialPropertiesTable();
 
-  fAnalysisManager->FillNtupleDColumn(2, 0, core->GetConstProperty("SCINTILLATIONYIELD"));
-  fAnalysisManager->FillNtupleDColumn(2, 1, core->GetConstProperty("FASTTIMECONSTANT"));
-  fAnalysisManager->FillNtupleDColumn(2, 2, core->GetProperty("RINDEX")->GetMinValue());
+  if(core->ConstPropertyExists("SCINTILLATIONYIELD")) fAnalysisManager->FillNtupleDColumn(2, 0, core->GetConstProperty("SCINTILLATIONYIELD"));
+  else fAnalysisManager->FillNtupleDColumn(2, 0, 0);
+
+  if(core->ConstPropertyExists("FASTTIMECONSTANT")) fAnalysisManager->FillNtupleDColumn(2, 1, core->GetConstProperty("FASTTIMECONSTANT"));
+  else fAnalysisManager->FillNtupleDColumn(2, 1, 0);
+
+  if(core->ConstPropertyExists("RINDEX")) fAnalysisManager->FillNtupleDColumn(2, 2, core->GetProperty("RINDEX")->GetMinValue());
+  else fAnalysisManager->FillNtupleDColumn(2, 2, 0);
+
   fAnalysisManager->FillNtupleDColumn(2, 3, geo::numFibers);
   fAnalysisManager->FillNtupleDColumn(2, 4, geo::fiberSpacing);
   fAnalysisManager->AddNtupleRow(2);
