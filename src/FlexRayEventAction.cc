@@ -29,6 +29,9 @@ void FlexRayEventAction::BeginOfEventAction(const G4Event* event)
   fIgnoreXRays = false;
   fEnergyDeposited = 0;
   fEHoles = 0;
+
+  mHitTime.clear();
+  mHitEnergy.clear();
   // This method is called at the beginning of each event.
   // We can use it to initialize variables, arrays, etc.
 }
@@ -46,6 +49,17 @@ void FlexRayEventAction::EndOfEventAction(const G4Event*)
   fAnalysisManager->FillH1(0, fDetected);
   if(fEnergyDeposited > 0) fAnalysisManager->FillH1(1, fEnergyDeposited/keV);
   if(fEHoles > 0) fAnalysisManager->FillH1(2, fEHoles);
+
+  for(std::map<G4int, G4double>::iterator i = mHitTime.begin(); i != mHitTime.end(); i++){
+    G4int det = i->first;
+    fAnalysisManager->FillNtupleIColumn(1, 0, fEventID);
+    fAnalysisManager->FillNtupleIColumn(1, 1, det);
+    fAnalysisManager->FillNtupleIColumn(1, 2, mHitPhotons[det]);
+    fAnalysisManager->FillNtupleDColumn(1, 3, mHitEnergy[det]/eV);
+    fAnalysisManager->FillNtupleDColumn(1, 4, mHitTime[det]/ns);
+
+    fAnalysisManager->AddNtupleRow(1);
+  }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -61,17 +75,28 @@ void FlexRayEventAction::LogDetection(int detectorIndex, G4double energy, G4doub
   fAnalysisManager->FillNtupleDColumn(0, 4, x/mm);
   fAnalysisManager->FillNtupleDColumn(0, 5, y/mm);
   fAnalysisManager->AddNtupleRow(0);
+
+  // add up energies in each SiPM
+  // add quantum efficiency number here instead of in analysis step?
+  if(mHitPhotons[detectorIndex] == 0){
+    mHitPhotons[detectorIndex] = 1;
+    mHitEnergy[detectorIndex] = energy;
+    mHitTime[detectorIndex] = time;
+  }else{
+    mHitPhotons[detectorIndex] += 1;
+    mHitEnergy[detectorIndex] += energy;
+  }
 }
 
 void FlexRayEventAction::LogXRay(G4double energy, G4double x, G4double y)
 {
   if(fIgnoreXRays) return;
 
-  fAnalysisManager->FillNtupleIColumn(1, 0, fEventID);
-  fAnalysisManager->FillNtupleDColumn(1, 1, energy/eV);
-  fAnalysisManager->FillNtupleDColumn(1, 2, x/mm);
-  fAnalysisManager->FillNtupleDColumn(1, 3, y/mm);
-  fAnalysisManager->AddNtupleRow(1);
+  fAnalysisManager->FillNtupleIColumn(2, 0, fEventID);
+  fAnalysisManager->FillNtupleDColumn(2, 1, energy/eV);
+  fAnalysisManager->FillNtupleDColumn(2, 2, x/mm);
+  fAnalysisManager->FillNtupleDColumn(2, 3, y/mm);
+  fAnalysisManager->AddNtupleRow(2);
 
   fIgnoreXRays = true; // only record first X-ray in event, not secondaries after scintillation.
 }

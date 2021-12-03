@@ -8,6 +8,7 @@
 #include "G4Event.hh"
 #include "FlexRayRunAction.hh"
 #include "globals.hh"
+#include <map>
 
 /// Event action class
 ///
@@ -32,6 +33,10 @@ private:
   G4bool fIgnoreXRays;
   G4double fEnergyDeposited;
   G4int fEHoles;
+
+  std::map<G4int, G4int> mHitPhotons;
+  std::map<G4int, G4double> mHitEnergy;
+  std::map<G4int, G4double> mHitTime;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

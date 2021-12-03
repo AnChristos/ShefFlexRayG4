@@ -8,8 +8,9 @@
 FlexRayRunAction::FlexRayRunAction()
 : G4UserRunAction(),
   fNumDetected(0),
-  fAnalysisManager(G4Analysis::ManagerInstance("csv")) // also try "csv", "root", "xml", "hdf5"
+  fAnalysisManager(G4Analysis::ManagerInstance("root")) // also try "csv", "root", "xml", "hdf5"
 {
+  // record indiviual photons on SiPM
   fAnalysisManager->CreateNtuple("Photons", "Optical Photons Detected");
   fAnalysisManager->CreateNtupleIColumn(0, "event");
   fAnalysisManager->CreateNtupleIColumn(0, "detector");
@@ -18,6 +19,15 @@ FlexRayRunAction::FlexRayRunAction()
   fAnalysisManager->CreateNtupleDColumn(0, "x");
   fAnalysisManager->CreateNtupleDColumn(0, "y");
   fAnalysisManager->FinishNtuple(0);
+
+  // compile photons into total hits on SiPM
+  fAnalysisManager->CreateNtuple("Digi", "SiPM Hits");
+  fAnalysisManager->CreateNtupleIColumn(1, "event");
+  fAnalysisManager->CreateNtupleIColumn(1, "detector");
+  fAnalysisManager->CreateNtupleIColumn(1, "photons");
+  fAnalysisManager->CreateNtupleDColumn(1, "energy");
+  fAnalysisManager->CreateNtupleDColumn(1, "time");
+  fAnalysisManager->FinishNtuple(1);
 
   // detectors lit up from a single x-ray:
   // 0: none
@@ -38,19 +48,19 @@ FlexRayRunAction::FlexRayRunAction()
 
   // MC truth
   fAnalysisManager->CreateNtuple("Xrays", "X-Ray hits");
-  fAnalysisManager->CreateNtupleIColumn(1, "event");
-  fAnalysisManager->CreateNtupleDColumn(1, "energy");
-  fAnalysisManager->CreateNtupleDColumn(1, "x");
-  fAnalysisManager->CreateNtupleDColumn(1, "y");
-  fAnalysisManager->FinishNtuple(1);
+  fAnalysisManager->CreateNtupleIColumn(2, "event");
+  fAnalysisManager->CreateNtupleDColumn(2, "energy");
+  fAnalysisManager->CreateNtupleDColumn(2, "x");
+  fAnalysisManager->CreateNtupleDColumn(2, "y");
+  fAnalysisManager->FinishNtuple(2);
 
   fAnalysisManager->CreateNtuple("Params", "Detector Parameters");
-  fAnalysisManager->CreateNtupleDColumn(2, "scint_yield");
-  fAnalysisManager->CreateNtupleDColumn(2, "scint_time");
-  fAnalysisManager->CreateNtupleDColumn(2, "scint_index");
-  fAnalysisManager->CreateNtupleDColumn(2, "n_fibers");
-  fAnalysisManager->CreateNtupleDColumn(2, "fiber_spacing");
-  fAnalysisManager->FinishNtuple(2);
+  fAnalysisManager->CreateNtupleDColumn(3, "scint_yield");
+  fAnalysisManager->CreateNtupleDColumn(3, "scint_time");
+  fAnalysisManager->CreateNtupleDColumn(3, "scint_index");
+  fAnalysisManager->CreateNtupleDColumn(3, "n_fibers");
+  fAnalysisManager->CreateNtupleDColumn(3, "fiber_spacing");
+  fAnalysisManager->FinishNtuple(3);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -71,18 +81,18 @@ void FlexRayRunAction::BeginOfRunAction(const G4Run*)
 
   G4MaterialPropertiesTable *core = G4LogicalVolumeStore::GetInstance()->GetVolume("Core")->GetMaterial()->GetMaterialPropertiesTable();
 
-  if(core->ConstPropertyExists("SCINTILLATIONYIELD")) fAnalysisManager->FillNtupleDColumn(2, 0, core->GetConstProperty("SCINTILLATIONYIELD"));
-  else fAnalysisManager->FillNtupleDColumn(2, 0, 0);
+  if(core->ConstPropertyExists("SCINTILLATIONYIELD")) fAnalysisManager->FillNtupleDColumn(3, 0, core->GetConstProperty("SCINTILLATIONYIELD"));
+  else fAnalysisManager->FillNtupleDColumn(3, 0, 0);
 
-  if(core->ConstPropertyExists("FASTTIMECONSTANT")) fAnalysisManager->FillNtupleDColumn(2, 1, core->GetConstProperty("FASTTIMECONSTANT"));
-  else fAnalysisManager->FillNtupleDColumn(2, 1, 0);
+  if(core->ConstPropertyExists("FASTTIMECONSTANT")) fAnalysisManager->FillNtupleDColumn(3, 1, core->GetConstProperty("FASTTIMECONSTANT"));
+  else fAnalysisManager->FillNtupleDColumn(3, 1, 0);
 
-  if(core->ConstPropertyExists("RINDEX")) fAnalysisManager->FillNtupleDColumn(2, 2, core->GetProperty("RINDEX")->GetMinValue());
-  else fAnalysisManager->FillNtupleDColumn(2, 2, 0);
+  if(core->ConstPropertyExists("RINDEX")) fAnalysisManager->FillNtupleDColumn(3, 2, core->GetProperty("RINDEX")->GetMinValue());
+  else fAnalysisManager->FillNtupleDColumn(3, 2, 0);
 
-  fAnalysisManager->FillNtupleDColumn(2, 3, geo::numFibers);
-  fAnalysisManager->FillNtupleDColumn(2, 4, geo::fiberSpacing);
-  fAnalysisManager->AddNtupleRow(2);
+  fAnalysisManager->FillNtupleDColumn(3, 3, geo::numFibers);
+  fAnalysisManager->FillNtupleDColumn(3, 4, geo::fiberSpacing);
+  fAnalysisManager->AddNtupleRow(3);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
