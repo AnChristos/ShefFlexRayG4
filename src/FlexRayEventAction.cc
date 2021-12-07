@@ -85,6 +85,7 @@ void FlexRayEventAction::LogDetection(int detectorIndex, G4double energy, G4doub
   }else{
     mHitPhotons[detectorIndex] += 1;
     mHitEnergy[detectorIndex] += energy;
+    if(time < mHitTime[detectorIndex]) mHitTime[detectorIndex] = time;
   }
 }
 
