@@ -87,7 +87,7 @@ void FlexRayRunAction::BeginOfRunAction(const G4Run*)
   if(core->ConstPropertyExists("FASTTIMECONSTANT")) fAnalysisManager->FillNtupleDColumn(3, 1, core->GetConstProperty("FASTTIMECONSTANT"));
   else fAnalysisManager->FillNtupleDColumn(3, 1, 0);
 
-  if(core->ConstPropertyExists("RINDEX")) fAnalysisManager->FillNtupleDColumn(3, 2, core->GetProperty("RINDEX")->GetMinValue());
+  if(core->GetProperty("RINDEX")) fAnalysisManager->FillNtupleDColumn(3, 2, core->GetProperty("RINDEX")->GetMinValue());
   else fAnalysisManager->FillNtupleDColumn(3, 2, 0);
 
   fAnalysisManager->FillNtupleDColumn(3, 3, geo::numFibers);
