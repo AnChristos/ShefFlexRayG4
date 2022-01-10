@@ -26,8 +26,9 @@ void FlexRaySteppingAction::UserSteppingAction(const G4Step* step)
   // log first interaction of each X-ray in the detector
 
   if( track->GetParticleDefinition()->GetPDGEncoding() == 22 &&
-      track->GetUserInformation() && track->GetUserInformation()->GetType() != "XRayAlreadyInteracted" &&
-      (volName == "Core" || volName == "InnerCladding" || volName == "OuterCladdingX" || volName == "OuterCladdingY")){
+      !(track->GetUserInformation() && track->GetUserInformation()->GetType() == "XRayAlreadyInteracted") &&
+      (volName == "Core" || volName == "InnerCladding" || volName == "OuterCladdingX" || volName == "OuterCladdingY") &&
+      step->GetTotalEnergyDeposit() > 0.0){
 
     G4ThreeVector pos = track->GetPosition();
     G4double x = pos.x();
@@ -36,7 +37,7 @@ void FlexRaySteppingAction::UserSteppingAction(const G4Step* step)
       x = atan2(x, pos.z()+geo::bendRadius) * geo::bendRadius;
     }
 
-    fEventAction->LogXRay(track->GetKineticEnergy(), x, pos.y());
+    fEventAction->LogXRay(step->GetTotalEnergyDeposit(), x, pos.y());
 
     track->SetUserInformation(new G4VUserTrackInformation("XRayAlreadyInteracted"));
   }

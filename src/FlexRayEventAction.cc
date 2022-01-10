@@ -30,6 +30,7 @@ void FlexRayEventAction::BeginOfEventAction(const G4Event* event)
   fEnergyDeposited = 0;
   fEHoles = 0;
 
+  mHitPhotons.clear();
   mHitTime.clear();
   mHitEnergy.clear();
   // This method is called at the beginning of each event.
