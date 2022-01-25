@@ -8,7 +8,7 @@
 FlexRayRunAction::FlexRayRunAction()
 : G4UserRunAction(),
   fNumDetected(0),
-  fAnalysisManager(G4Analysis::ManagerInstance("root")) // also try "csv", "root", "xml", "hdf5"
+  fAnalysisManager(G4Analysis::ManagerInstance("csv")) // also try "csv", "root", "xml", "hdf5"
 {
   // record indiviual photons on SiPM
   fAnalysisManager->CreateNtuple("Photons", "Optical Photons Detected");
@@ -60,7 +60,20 @@ FlexRayRunAction::FlexRayRunAction()
   fAnalysisManager->CreateNtupleDColumn(3, "scint_index");
   fAnalysisManager->CreateNtupleDColumn(3, "n_fibers");
   fAnalysisManager->CreateNtupleDColumn(3, "fiber_spacing");
+  fAnalysisManager->CreateNtupleDColumn(3, "layer_offset_x");
+  fAnalysisManager->CreateNtupleDColumn(3, "layer_offset_y");
   fAnalysisManager->FinishNtuple(3);
+
+  fAnalysisManager->CreateNtuple("Flex", "FlexPoints");
+  fAnalysisManager->CreateNtupleDColumn(4, "x_local");
+  fAnalysisManager->CreateNtupleDColumn(4, "y_local");
+  fAnalysisManager->CreateNtupleDColumn(4, "x_global");
+  fAnalysisManager->CreateNtupleDColumn(4, "y_global");
+  fAnalysisManager->CreateNtupleDColumn(4, "z_global");
+  fAnalysisManager->CreateNtupleDColumn(4, "x_normal");
+  fAnalysisManager->CreateNtupleDColumn(4, "y_normal");
+  fAnalysisManager->CreateNtupleDColumn(4, "z_normal");
+  fAnalysisManager->FinishNtuple(4);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -92,7 +105,39 @@ void FlexRayRunAction::BeginOfRunAction(const G4Run*)
 
   fAnalysisManager->FillNtupleDColumn(3, 3, geo::numFibers);
   fAnalysisManager->FillNtupleDColumn(3, 4, geo::fiberSpacing);
+
+  // layer offsets
+  fAnalysisManager->FillNtupleDColumn(3, 5, -geo::layerSpacing/2);
+  fAnalysisManager->FillNtupleDColumn(3, 6, geo::layerSpacing/2);
+
   fAnalysisManager->AddNtupleRow(3);
+
+  // fill FlexPoints
+  double size = geo::numFibers * geo::fiberSpacing;
+
+  for(int i=0; i<5; i++){
+    for(int j=0; j<5; j++){
+      double xl = (i/4.0 - 0.5)*size;
+      double yl = (j/4.0 - 0.5)*size;
+      double theta = xl / geo::bendRadius;
+      double xg = geo::bendRadius * sin(theta);
+      double yg = yl;
+      double zg = geo::bendRadius * cos(theta);
+      double xn = -sin(theta);
+      double yn = 0;
+      double zn = cos(theta);
+
+      fAnalysisManager->FillNtupleDColumn(4,0,xl);
+      fAnalysisManager->FillNtupleDColumn(4,1,yl);
+      fAnalysisManager->FillNtupleDColumn(4,2,xg);
+      fAnalysisManager->FillNtupleDColumn(4,3,yg);
+      fAnalysisManager->FillNtupleDColumn(4,4,zg);
+      fAnalysisManager->FillNtupleDColumn(4,5,xn);
+      fAnalysisManager->FillNtupleDColumn(4,6,yn);
+      fAnalysisManager->FillNtupleDColumn(4,7,zn);
+      fAnalysisManager->AddNtupleRow(4);
+    }
+  }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
