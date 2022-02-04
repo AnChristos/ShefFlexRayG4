@@ -125,7 +125,7 @@ void FlexRayRunAction::BeginOfRunAction(const G4Run*)
       double zg = geo::bendRadius * cos(theta);
       double xn = -sin(theta);
       double yn = 0;
-      double zn = cos(theta);
+      double zn = -cos(theta);
 
       fAnalysisManager->FillNtupleDColumn(4,0,xl);
       fAnalysisManager->FillNtupleDColumn(4,1,yl);
