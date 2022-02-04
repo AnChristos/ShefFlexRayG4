@@ -9,11 +9,12 @@
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-FlexRayEventAction::FlexRayEventAction(FlexRayRunAction *runAction)
+FlexRayEventAction::FlexRayEventAction(FlexRayRunAction *runAction, G4bool outputRaw)
 : G4UserEventAction(),
   fRunAction(runAction),
   fDetected(0),
-  fAnalysisManager(runAction->GetAnalysisManager())
+  fAnalysisManager(runAction->GetAnalysisManager()),
+  bOutputRaw(outputRaw)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -69,13 +70,16 @@ void FlexRayEventAction::LogDetection(int detectorIndex, G4double energy, G4doub
 {
   // add some histograms or a TTree of energy and time
   fDetected |= (1 << (detectorIndex>>8));
-  fAnalysisManager->FillNtupleIColumn(0, 0, fEventID);
-  fAnalysisManager->FillNtupleIColumn(0, 1, detectorIndex);
-  fAnalysisManager->FillNtupleDColumn(0, 2, energy/eV);
-  fAnalysisManager->FillNtupleDColumn(0, 3, time/ns);
-  fAnalysisManager->FillNtupleDColumn(0, 4, x/mm);
-  fAnalysisManager->FillNtupleDColumn(0, 5, y/mm);
-  fAnalysisManager->AddNtupleRow(0);
+
+  if(bOutputRaw){
+    fAnalysisManager->FillNtupleIColumn(0, 0, fEventID);
+    fAnalysisManager->FillNtupleIColumn(0, 1, detectorIndex);
+    fAnalysisManager->FillNtupleDColumn(0, 2, energy/eV);
+    fAnalysisManager->FillNtupleDColumn(0, 3, time/ns);
+    fAnalysisManager->FillNtupleDColumn(0, 4, x/mm);
+    fAnalysisManager->FillNtupleDColumn(0, 5, y/mm);
+    fAnalysisManager->AddNtupleRow(0);
+  }
 
   // add up energies in each SiPM
   // add quantum efficiency number here instead of in analysis step?

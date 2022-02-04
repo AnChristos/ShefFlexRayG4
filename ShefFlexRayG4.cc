@@ -50,7 +50,7 @@ main(int argc, char** argv)
   FlexRayRunAction* runAction = new FlexRayRunAction();
   runManager->SetUserAction(runAction);
   //
-  FlexRayEventAction* eventAction = new FlexRayEventAction(runAction);
+  FlexRayEventAction* eventAction = new FlexRayEventAction(runAction, false);
   runManager->SetUserAction(eventAction);
   //
   G4UserSteppingAction* steppingAction = new FlexRaySteppingAction(eventAction);

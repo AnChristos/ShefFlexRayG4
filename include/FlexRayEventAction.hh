@@ -16,7 +16,7 @@
 class FlexRayEventAction : public G4UserEventAction
 {
 public:
-  FlexRayEventAction(FlexRayRunAction *runAction);
+  FlexRayEventAction(FlexRayRunAction *runAction, G4bool outputRaw=true);
   virtual ~FlexRayEventAction();
   virtual void BeginOfEventAction(const G4Event* event) override;
   virtual void EndOfEventAction(const G4Event* event) override;
@@ -33,6 +33,7 @@ private:
   G4bool fIgnoreXRays;
   G4double fEnergyDeposited;
   G4int fEHoles;
+  G4bool bOutputRaw;
 
   std::map<G4int, G4int> mHitPhotons;
   std::map<G4int, G4double> mHitEnergy;
