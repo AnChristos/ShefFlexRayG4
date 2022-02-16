@@ -62,6 +62,8 @@ FlexRayRunAction::FlexRayRunAction()
   fAnalysisManager->CreateNtupleDColumn(3, "fiber_spacing");
   fAnalysisManager->CreateNtupleDColumn(3, "layer_offset_x");
   fAnalysisManager->CreateNtupleDColumn(3, "layer_offset_y");
+  fAnalysisManager->CreateNtupleDColumn(3, "num_layers");
+  fAnalysisManager->CreateNtupleDColumn(3, "detector_spacing");
   fAnalysisManager->FinishNtuple(3);
 
   fAnalysisManager->CreateNtuple("Flex", "FlexPoints");
@@ -109,6 +111,9 @@ void FlexRayRunAction::BeginOfRunAction(const G4Run*)
   // layer offsets
   fAnalysisManager->FillNtupleDColumn(3, 5, -geo::layerSpacing/2);
   fAnalysisManager->FillNtupleDColumn(3, 6, geo::layerSpacing/2);
+
+  fAnalysisManager->FillNtupleDColumn(3, 7, geo::numLayers);
+  fAnalysisManager->FillNtupleDColumn(3, 8, geo::detectorSpacing);
 
   fAnalysisManager->AddNtupleRow(3);
 
