@@ -124,13 +124,21 @@ void FlexRayRunAction::BeginOfRunAction(const G4Run*)
     for(int j=0; j<5; j++){
       double xl = (i/4.0 - 0.5)*size;
       double yl = (j/4.0 - 0.5)*size;
-      double theta = xl / geo::bendRadius;
-      double xg = geo::bendRadius * sin(theta);
+
+      double xg = xl;
       double yg = yl;
-      double zg = geo::bendRadius * cos(theta);
-      double xn = -sin(theta);
+      double zg = 0;
+      double xn = 0;
       double yn = 0;
-      double zn = -cos(theta);
+      double zn = -1;
+
+      if(geo::bendTheta > 0.01){
+        double theta = xl / geo::bendRadius;
+        xg = geo::bendRadius * sin(theta);
+        zg = geo::bendRadius * cos(theta);
+        xn = -sin(theta);
+        zn = -cos(theta);
+      }
 
       fAnalysisManager->FillNtupleDColumn(4,0,xl);
       fAnalysisManager->FillNtupleDColumn(4,1,yl);
