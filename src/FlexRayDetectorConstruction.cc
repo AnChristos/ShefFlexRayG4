@@ -226,7 +226,7 @@ FlexRayDetectorConstruction::Construct()
         ypos = G4ThreeVector(0, offset, -geo::bendRadius);
       }
 
-      new G4PVPlacement(yrot, ypos, logicFiberClad2Y, "OuterCladdingY", logicWorld, false, iLayer*geo::numFibers + i, true);
+      new G4PVPlacement(yrot, ypos, logicFiberClad2Y, "OuterCladdingY", logicWorld, false, iLayer/2*geo::numFibers + i, true);
     }
 
     if(geo::numLayers == iLayer+1){ // odd number of layers, skip x fibers
@@ -249,7 +249,7 @@ FlexRayDetectorConstruction::Construct()
         xrot->rotateZ( offset / geo::bendRadius );
       }
 
-      new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, iLayer*geo::numFibers + i, true); // need the if there in case we're building an odd number of layers
+      new G4PVPlacement(xrot, xpos, logicFiberClad2, "OuterCladdingX", logicWorld, false, iLayer/2*geo::numFibers + i, true); // need the if there in case we're building an odd number of layers
     }
   }
 
