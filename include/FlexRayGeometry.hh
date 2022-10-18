@@ -7,11 +7,11 @@
 namespace geo
 {
 
-  const G4bool squareFibers = false;
-  const G4double fiberLength = 30 * cm;
-  const G4double fiberRadius = 350 * um / 2;
-  const G4double fiberInnerRadius2 = 250 * um / 2; // inner radius of second cladding
-  const G4double fiberInnerRadius1 = 50 * um / 2; // inner radius of first cladding
+  const G4bool squareFibers = true;
+  const G4double fiberLength = 10 * cm;
+  const G4double fiberRadius = 1 * mm / 2;
+  const G4double fiberInnerRadius2 = 0.99 * fiberRadius; // inner radius of second cladding
+  const G4double fiberInnerRadius1 = 0.96 * fiberRadius; // inner radius of first cladding
 
   // join to optical fiber: 0: none, 1: direct, 2: narrow, 3: two-hole
   const G4int fiberJoin = 0;
@@ -26,11 +26,11 @@ namespace geo
 
   const G4double fiberRoughness = 1; // 1 is perfectly smooth
 
-  const G4int numFibers = 1;
-  const G4double fiberSpacing = fiberRadius*2 * 1.1;
+  const G4int numFibers = 8;
+  const G4double fiberSpacing = fiberRadius*2 + 0.4*mm;
 
-  const G4int numLayers = 1;
-  const G4double layerSpacing = fiberRadius*2 *1.1;
+  const G4int numLayers = 2;
+  const G4double layerSpacing = fiberRadius*2 +0.4*mm;
   const G4double detectorSpacing = 5 * cm; // distance between 2-layer groups
 
   // ----------------

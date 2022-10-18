@@ -191,14 +191,14 @@ FlexRayMaterials::FlexRayMaterials(){
   FillConstProperty(MPT_CdTe, "ABSLENGTH", 1*um);
   CdTe->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
   MPT_CdTe->AddConstProperty("RESOLUTIONSCALE", 1.0); // I think this isn't a property of the material, just of the simulation
-  MPT_CdTe->AddConstProperty("SCINTILLATIONYIELD", 0/MeV); // simulation won't work unless I give it these properties.  why?
-  MPT_CdTe->AddConstProperty("FASTTIMECONSTANT", 1 * ns); // simulation won't work unless I give it these properties.  why?
+  MPT_CdTe->AddConstProperty("SCINTILLATIONYIELD", 0/MeV);
+  MPT_CdTe->AddConstProperty("FASTTIMECONSTANT", 1 * ns);
   MPT_CdTe->AddConstProperty("EHOLEPRODUCTION", 4.43*eV); // https://www.osti.gov/etdeweb/servlets/purl/20267247
   CdTe->SetMaterialPropertiesTable(MPT_CdTe);
 
-  Core = BC505;
-  Clad1 = SiGlass;
-  Clad2 = MY130;
+  Core = BCF10;
+  Clad1 = PMMA149;
+  Clad2 = PMMA142;
 
   EndFiberCore = CoreGlass;
 }

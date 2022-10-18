@@ -8,7 +8,7 @@
 FlexRayRunAction::FlexRayRunAction()
 : G4UserRunAction(),
   fNumDetected(0),
-  fAnalysisManager(G4Analysis::ManagerInstance("csv")) // also try "csv", "root", "xml", "hdf5"
+  fAnalysisManager(G4Analysis::ManagerInstance("root")) // also try "csv", "root", "xml", "hdf5"
 {
   // record indiviual photons on SiPM
   fAnalysisManager->CreateNtuple("Photons", "Optical Photons Detected");

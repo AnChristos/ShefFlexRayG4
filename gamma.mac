@@ -5,9 +5,13 @@
 #/tracking/verbose 1
 #
 /gps/particle gamma 
-/gps/energy 10 keV
+/gps/energy 100 keV
 /gps/direction 0. 0. 1.
-/gps/position 1.1 1.1 -200 mm
+/gps/position 0 0 -100 mm
 
-#
+/gps/ang/type iso
+/gps/ang/mintheta 175 deg
+/gps/ang/maxtheta 180 deg
+
 /run/beamOn 100
+
