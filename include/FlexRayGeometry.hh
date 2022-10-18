@@ -47,7 +47,7 @@ namespace geo
   static G4double layerPosition(int layer) {return layer * layerSpacing + (layer/2)*detectorSpacing - (numLayers-1)/2*layerSpacing - ((numLayers-1)/2) * detectorSpacing; }
   static G4double layerRadius(int layer) { return bendRadius + layerPosition(layer); } // calculated from radius or theta
 
-  const G4double foilThickness = -1 * um; // less than 0 for no foil, standard household Al foil is 16 um
+  const G4double foilThickness = 0.1 * mm; // less than 0 for no foil, standard household Al foil is 16 um
 }
 
 #endif

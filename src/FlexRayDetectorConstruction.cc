@@ -254,10 +254,10 @@ FlexRayDetectorConstruction::Construct()
   }
 
   // add Pb foil
-  if(geo::bendTheta < 0.01 * deg && geo::foilThickness > 0){
-    G4Box* boxFoil = new G4Box("Foil", geo::numFibers * geo::fiberSpacing / 2, geo::numFibers * geo::fiberSpacing / 2, geo::foilThickness/2);
-    G4LogicalVolume* logicFoil = new G4LogicalVolume(boxFoil, sNistMan->FindOrBuildMaterial("G4_Pb"), "Foil");
-    new G4PVPlacement(0, G4ThreeVector(0,0,geo::layerPosition(-1)), logicFoil, "Foil", logicWorld, false, 0, true);
+  if(geo::foilThickness > 0){
+    G4Tubs* shadowFoil = new G4Tubs("Foil", 0, geo::numFibers * geo::fiberSpacing / 2, geo::foilThickness/2, 0*deg, 360*deg);
+    G4LogicalVolume* logicFoil = new G4LogicalVolume(shadowFoil, sNistMan->FindOrBuildMaterial("G4_Pb"), "Foil");
+    new G4PVPlacement(0, G4ThreeVector(geo::numFibers * geo::fiberSpacing / 2,geo::numFibers * geo::fiberSpacing / 2,geo::layerPosition(-1)), logicFoil, "Foil", logicWorld, false, 0, true);
   }
 
   // print out fiber location for testing
