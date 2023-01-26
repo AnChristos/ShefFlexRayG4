@@ -58,8 +58,10 @@ FlexRayRunAction::FlexRayRunAction()
   fAnalysisManager->CreateNtupleDColumn(3, "scint_yield");
   fAnalysisManager->CreateNtupleDColumn(3, "scint_time");
   fAnalysisManager->CreateNtupleDColumn(3, "scint_index");
+  fAnalysisManager->CreateNtupleDColumn(3, "clad_index");
   fAnalysisManager->CreateNtupleDColumn(3, "n_fibers");
   fAnalysisManager->CreateNtupleDColumn(3, "fiber_spacing");
+  fAnalysisManager->CreateNtupleDColumn(3, "fiber_length");
   fAnalysisManager->CreateNtupleDColumn(3, "layer_offset_x");
   fAnalysisManager->CreateNtupleDColumn(3, "layer_offset_y");
   fAnalysisManager->CreateNtupleDColumn(3, "num_layers");
@@ -105,15 +107,21 @@ void FlexRayRunAction::BeginOfRunAction(const G4Run*)
   if(core->GetProperty("RINDEX")) fAnalysisManager->FillNtupleDColumn(3, 2, core->GetProperty("RINDEX")->GetMinValue());
   else fAnalysisManager->FillNtupleDColumn(3, 2, 0);
 
-  fAnalysisManager->FillNtupleDColumn(3, 3, geo::numFibers);
-  fAnalysisManager->FillNtupleDColumn(3, 4, geo::fiberSpacing);
+  G4MaterialPropertiesTable *clad = G4LogicalVolumeStore::GetInstance()->GetVolume("OuterCladding")->GetMaterial()->GetMaterialPropertiesTable();
+
+  if(clad->GetProperty("RINDEX")) fAnalysisManager->FillNtupleDColumn(3, 3, clad->GetProperty("RINDEX")->GetMinValue());
+  else fAnalysisManager->FillNtupleDColumn(3, 3, 0);
+
+  fAnalysisManager->FillNtupleDColumn(3, 4, geo::numFibers);
+  fAnalysisManager->FillNtupleDColumn(3, 5, geo::fiberSpacing);
+  fAnalysisManager->FillNtupleDColumn(3, 6, geo::fiberLength);
 
   // layer offsets
-  fAnalysisManager->FillNtupleDColumn(3, 5, -geo::layerSpacing/2);
-  fAnalysisManager->FillNtupleDColumn(3, 6, geo::layerSpacing/2);
+  fAnalysisManager->FillNtupleDColumn(3, 7, -geo::layerSpacing/2);
+  fAnalysisManager->FillNtupleDColumn(3, 8, geo::layerSpacing/2);
 
-  fAnalysisManager->FillNtupleDColumn(3, 7, geo::numLayers);
-  fAnalysisManager->FillNtupleDColumn(3, 8, geo::detectorSpacing);
+  fAnalysisManager->FillNtupleDColumn(3, 9, geo::numLayers);
+  fAnalysisManager->FillNtupleDColumn(3, 10, geo::detectorSpacing);
 
   fAnalysisManager->AddNtupleRow(3);
 
