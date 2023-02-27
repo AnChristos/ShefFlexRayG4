@@ -18,6 +18,7 @@
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 #include "G4VPhysicalVolume.hh"
+#include "G4tgbVolumeMgr.hh"
 
 using namespace CLHEP;
 
@@ -253,11 +254,15 @@ FlexRayDetectorConstruction::Construct()
     }
   }
 
-  // add Pb foil
-  if(geo::foilThickness > 0){
-    G4Tubs* shadowFoil = new G4Tubs("Foil", 0, geo::numFibers * geo::fiberSpacing / 2, geo::foilThickness/2, 0*deg, 360*deg);
-    G4LogicalVolume* logicFoil = new G4LogicalVolume(shadowFoil, sNistMan->FindOrBuildMaterial("G4_Pb"), "Foil");
-    new G4PVPlacement(0, G4ThreeVector(geo::numFibers * geo::fiberSpacing / 2,geo::numFibers * geo::fiberSpacing / 2,geo::layerPosition(-1)), logicFoil, "Foil", logicWorld, false, 0, true);
+  // add image target
+  if(geo::imageTarget != ""){
+    G4tgbVolumeMgr::GetInstance()->AddTextFile(geo::imageTarget);
+    G4VPhysicalVolume *target = G4tgbVolumeMgr::GetInstance()->ReadAndConstructDetector();
+    target->SetTranslation(G4ThreeVector(geo::targetX, geo::targetY, geo::targetZ));
+    logicWorld->AddDaughter(target);
+
+    //G4cout << "parent of target: " << G4endl;
+    //G4cout << target->GetMotherLogical()->GetName() << '\t' << target->GetTranslation() << '\t' << target->GetRotation() << G4endl;
   }
 
   // print out fiber location for testing

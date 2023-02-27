@@ -3,11 +3,12 @@
 
 #include "G4SystemOfUnits.hh"
 #include "G4Types.hh"
+#include "G4String.hh"
 
 namespace geo
 {
 
-  const G4bool squareFibers = true;
+  const G4bool squareFibers = false;
   const G4double fiberLength = 10 * cm;
   const G4double fiberRadius = 1 * mm / 2;
   const G4double fiberInnerRadius2 = 0.99 * fiberRadius; // inner radius of second cladding
@@ -47,7 +48,10 @@ namespace geo
   static G4double layerPosition(int layer) {return layer * layerSpacing + (layer/2)*detectorSpacing - (numLayers-1)/2*layerSpacing - ((numLayers-1)/2) * detectorSpacing; }
   static G4double layerRadius(int layer) { return bendRadius + layerPosition(layer); } // calculated from radius or theta
 
-  const G4double foilThickness = 0.1 * mm; // less than 0 for no foil, standard household Al foil is 16 um
+  const G4String imageTarget = ""; // empty string for no target
+  const G4double targetX = 0*mm;
+  const G4double targetY = 0*mm;
+  const G4double targetZ = -20 * mm;
 }
 
 #endif
