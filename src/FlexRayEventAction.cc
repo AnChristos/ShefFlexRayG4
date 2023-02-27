@@ -40,7 +40,7 @@ void FlexRayEventAction::BeginOfEventAction(const G4Event* event)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void FlexRayEventAction::EndOfEventAction(const G4Event*)
+void FlexRayEventAction::EndOfEventAction(const G4Event* event)
 {
   // This method is called at the end of each event.
   // We can use it to make calculations or simply to write collected data
@@ -61,6 +61,10 @@ void FlexRayEventAction::EndOfEventAction(const G4Event*)
     fAnalysisManager->FillNtupleDColumn(1, 4, mHitTime[det]/ns);
 
     fAnalysisManager->AddNtupleRow(1);
+  }
+
+  if( (event->GetEventID() % 100000) == 0){
+    G4cout << "event " << event->GetEventID() << G4endl;
   }
 }
 
